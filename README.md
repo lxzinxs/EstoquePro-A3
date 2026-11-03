@@ -1,6 +1,6 @@
 # EstoquePro
 
-Sistema web de gerenciamento de estoque para pequenos negócios. Projeto acadêmico A3 de Projeto e Engenharia de Software, iniciado em 03/11/2026.
+Sistema web de gerenciamento de estoque para pequenos negócios. Projeto acadêmico A3 de Projeto e Engenharia de Software, iniciado em 03/10/2026.
 
 ## Executar
 
