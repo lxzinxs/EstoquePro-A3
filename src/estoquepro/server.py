@@ -209,7 +209,7 @@ def main():
         parser.error('A senha inicial deve ter de 12 a 256 caracteres.')
     if args.host != '127.0.0.1' and args.demo:
         parser.error('O modo demo só permite --host 127.0.0.1.')
-    inventory.initialize(password or 'EstoquePro@2026', args.demo)
+    inventory.initialize(password or 'admin123', args.demo)
     print(f'EstoquePro em {args.host}:{args.port} — Ctrl+C para encerrar.', flush=True)
     server = Application((args.host, args.port), inventory)
     try:

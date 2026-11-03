@@ -11,7 +11,7 @@ cd /workspace/EstoquePro-A3
 PYTHONPATH=src python -m estoquepro.server --demo
 ```
 
-Em um computador local, abra o endereço HTTP do servidor na porta **8000**. Login de demonstração: **admin** / **EstoquePro@2026**. O modo demo é restrito à interface de loopback. Na nuvem, a validação é feita com requisições locais; este projeto não publica uma prévia web automaticamente.
+Em um computador local, abra o endereço HTTP do servidor na porta **8000**. Login de demonstração: **admin** / **admin123**. O modo demo é restrito à interface de loopback. Na nuvem, a validação é feita com requisições locais; este projeto não publica uma prévia web automaticamente.
 
 No Windows PowerShell, na pasta do projeto:
 
