@@ -20,13 +20,32 @@ $env:PYTHONPATH = "src"
 python -m estoquepro.server --demo
 ```
 
-O banco é criado em `data/estoquepro.sqlite3` e os dados permanecem após reiniciar. Dados fictícios só são inseridos se categorias, fornecedores, produtos e movimentações estiverem vazios. A senha inicial nunca é substituída em um banco já inicializado. Encerre com Ctrl+C.
+O banco é criado em `data/estoquepro.sqlite3` e os dados permanecem após reiniciar. Dados fictícios só são inseridos se categorias, fornecedores, produtos e movimentações estiverem vazios. No modo `--demo`, a senha padrão antiga do administrador é migrada para `admin123`. Senhas personalizadas são preservadas, salvo redefinição explícita descrita abaixo. Encerre com Ctrl+C.
 
 Para começar sem dados fictícios, use um banco novo e defina `ESTOQUEPRO_ADMIN_PASSWORD` com 12 a 256 caracteres por um mecanismo seguro do seu ambiente. Execute sem `--demo`; não registre senhas no Git ou em comandos compartilhados. Para separar bancos, use `--database /caminho/arquivo.sqlite3`. Isso não altera a senha de bancos existentes.
 
+## Não consigo entrar / cadastrar usuário
+
+Após atualizar o código, encerre o servidor antigo e reinicie. Para garantir o acesso **admin / admin123** no banco que você usa, execute uma vez:
+
+```bash
+PYTHONPATH=src python -m estoquepro.server --demo --reset-demo-admin
+```
+
+No Windows PowerShell:
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m estoquepro.server --demo --reset-demo-admin
+```
+
+Se usa `--database`, passe **o mesmo caminho do banco existente**. O comando redefine apenas a senha de `admin`: preserva usuários, produtos, saldos e histórico. É restrito ao modo demo local e não pode ser combinado com `ESTOQUEPRO_ADMIN_PASSWORD`. Não é necessário apagar `data/` ou recriar o banco. Nos próximos inícios, basta `--demo`.
+
+Na tela inicial, selecione **Cadastro**, informe usuário, senha de pelo menos oito caracteres e confirmação. A conta é persistida e abre o painel automaticamente. Todos os usuários têm o mesmo perfil de gestão e compartilham o estoque. O cadastro pela tela só funciona quando o servidor está vinculado a loopback; não é um cadastro público para operação na Internet.
+
 ## O que funciona
 
-- Login, sessão de oito horas e logout.
+- Abas Entrar e Cadastro, criação de usuário com confirmação de senha, sessão de oito horas e logout.
 - Cadastro de categorias e fornecedores por nome.
 - Cadastro, pesquisa e edição de produtos com código único, vínculos, preço e estoque mínimo.
 - Entradas e saídas atômicas com motivo, usuário, data e saldo após a operação.
@@ -34,7 +53,7 @@ Para começar sem dados fictícios, use um banco novo e defina `ESTOQUEPRO_ADMIN
 - Painel, filtro de estoque baixo e exportação CSV do estoque ativo.
 - Interface responsiva em português, sem serviços externos de fontes ou scripts.
 
-O preço é de referência; não é um sistema fiscal ou de custeio. Há um único perfil administrador. Não há recuperação de senha, cadastro de usuários, edição de categorias/fornecedores, edição do histórico ou restauração de produto arquivado na interface.
+O preço é de referência; não é um sistema fiscal ou de custeio. Há um único perfil administrador. Não há recuperação de senha por e-mail, edição de categorias/fornecedores, edição do histórico ou restauração de produto arquivado na interface.
 
 ## Testes
 

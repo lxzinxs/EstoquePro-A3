@@ -92,6 +92,31 @@ class Inventory:
                 return {'id': user['id'], 'username': user['username']}
         return None
 
+    def register(self, data):
+        username = text(data.get('username'), 'Usuário', 32).lower()
+        if not re.fullmatch(r'[a-z0-9][a-z0-9_.-]{2,31}', username):
+            raise ValidationError('Usuário: use de 3 a 32 letras sem acentos, números, ponto, hífen ou sublinhado.')
+        password = data.get('password')
+        if not isinstance(password, str) or not 8 <= len(password) <= 256:
+            raise ValidationError('Senha: use de 8 a 256 caracteres.')
+        if password != data.get('confirm_password'):
+            raise ValidationError('As senhas não coincidem.')
+        with self.connect() as db:
+            if db.execute('SELECT id FROM users WHERE lower(username)=?', (username,)).fetchone():
+                raise ValidationError('Este usuário já está cadastrado. Escolha outro nome ou entre na sua conta.')
+            uid = db.execute('INSERT INTO users(username,password_hash) VALUES (?,?)',
+                             (username, hash_password(password))).lastrowid
+        return {'id': uid, 'username': username}
+
+    def configure_demo_access(self, reset=False):
+        """Migra só a senha demo antiga; outras senhas exigem reset local explícito."""
+        with self.connect() as db:
+            user = db.execute("SELECT id,password_hash FROM users WHERE username='admin'").fetchone()
+            if user and (reset or check_password('EstoquePro@2026', user['password_hash'])):
+                db.execute('UPDATE users SET password_hash=? WHERE id=?', (hash_password('admin123'), user['id']))
+                return True
+        return False
+
     def lookup(self, table):
         assert table in ('categories', 'suppliers')
         with self.connect() as db:

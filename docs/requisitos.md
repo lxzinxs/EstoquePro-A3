@@ -172,3 +172,20 @@ RB01: quantidades inteiras, positivas nas movimentações e não negativas em m�
 ## Critério de conclusão acadêmica
 
 Requisitos acima representam o MVP implementado, não comprovam aderência a requisitos desconhecidos do PDF. A entrega final exige revisão da equipe, template oficial e confirmação das exigências do professor. Rastreio local: 15966a9 (domínio), 3101165 (API/interface) e 0754e1c (testes); detalhes por tarefa no backlog. Não houve publicação remota.
+
+
+## RF013 — Cadastrar usuário local
+
+- **Descrição:** permitir a criação de conta pela aba Cadastro da tela de acesso.
+- **Ator:** novo usuário do negócio. **Prioridade:** Alta.
+- **Entradas:** usuário de 3–32 caracteres ASCII permitidos, senha de 8–256 caracteres e confirmação.
+- **Processamento:** normalizar usuário para minúsculas, validar unicidade sem distinção de caixa, comparar confirmação, criar hash PBKDF2, persistir e abrir sessão.
+- **Saídas:** painel autenticado ou mensagem de erro sem conta parcial.
+- **Regras:** cadastro disponível somente no servidor vinculado a loopback; contas compartilham estoque e permissões. Não permite recriar usuário existente ou redefinir sua senha pelo cadastro. Mesma proteção de origem, JSON e limite de tentativas do login.
+- **Aceitação:** nova conta entra automaticamente; pode sair e entrar novamente; nomes repetidos e senhas divergentes são recusados.
+- **Verificação:** `test_register_validation_and_duplicate`, `test_register_login_and_shared_inventory`, `test_register_rejects_invalid_data_and_cross_site` e `browser_smoke.py`.
+- **Rastreio:** UC13 → T21 → `Inventory.register`, `/api/register` e formulários de acesso.
+
+### Complemento RF001 — compatibilidade do acesso demo
+
+No início local com `--demo`, a antiga senha padrão é migrada para `admin123` sem perda de dados. Senha personalizada só é redefinida com `--reset-demo-admin`, opção explícita local. Verificado por `test_legacy_demo_migration_preserves_data` e `test_demo_preserves_custom_password_until_explicit_reset`; T22.

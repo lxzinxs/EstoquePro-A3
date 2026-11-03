@@ -4,13 +4,13 @@
 
 Usar o checkout existente; as tarefas de nuvem já são isoladas, portanto não criar worktree para configurar. Na raiz do repositório, executar os comandos do README. Python 3.12+ é o único requisito obrigatório. A inicialização cria tabelas e índices sem apagar dados. Não há compilação nem download de dependências em execução.
 
-Parâmetros: `--host` (padrão `127.0.0.1`), `--port` (8000), `--database` (caminho do SQLite) e `--demo`. O modo demo recusa outro host. Para verificar prontidão, solicitar a página inicial e efetuar login seguido de consulta a `/api/dashboard`; apenas uma porta aberta não comprova funcionamento.
+Parâmetros: `--host` (padrão `127.0.0.1`), `--port` (8000), `--database` (caminho do SQLite) e `--demo`. O modo demo recusa outro host. `--reset-demo-admin`, combinado com `--demo`, redefine explicitamente o administrador para a credencial de demonstração sem alterar o catálogo ou o histórico. Ao iniciar normalmente com `--demo` e sem senha de ambiente, somente a antiga senha padrão `EstoquePro@2026` é migrada automaticamente para `admin123`; outras senhas são preservadas. Para verificar prontidão, solicitar a página inicial e efetuar login seguido de consulta a `/api/dashboard`; apenas uma porta aberta não comprova funcionamento.
 
 Configuração opcional: `ESTOQUEPRO_ADMIN_PASSWORD` define a senha inicial apenas de um banco novo; `ESTOQUEPRO_SECURE_COOKIE=1` exige transporte HTTPS do navegador para o cookie. Valores de senha devem permanecer fora dos arquivos do projeto. `PYTHONPATH=src` é necessário ao executar pelo módulo na raiz. Sessões não sobrevivem a reinícios.
 
 ## Guia do usuário
 
-1. Entrar com o usuário administrador configurado.
+1. Entrar com o usuário configurado ou selecionar Cadastro para criar conta local. Usar usuário de 3–32 letras ASCII/números/ponto/hífen/sublinhado, senha de 8–256 caracteres e confirmação idêntica. O nome é salvo em minúsculas; contas compartilham o mesmo estoque e permissões.
 2. Em Categorias, criar ao menos uma categoria. Fornecedores são opcionais e só armazenam nome.
 3. Em Produtos, criar código, nome, categoria, fornecedor opcional, preço de referência e mínimo. O saldo inicial é zero.
 4. Em Movimentações, selecionar produto, entrada ou saída, quantidade inteira positiva e motivo. Conferir antes de salvar: o histórico não é editável.
@@ -27,6 +27,7 @@ JSON em UTF-8, `Content-Type: application/json` para corpos, máximo 16 KB. Cook
 | Método | Caminho | Corpo / resultado |
 |---|---|---|
 | POST | `/api/login` | `{username,password}` → `{user,csrf}` e cookie |
+| POST | `/api/register` | `{username,password,confirm_password}` → 201, `{user,csrf}` e cookie; apenas servidor em loopback |
 | GET | `/api/session` | Usuário e token CSRF |
 | POST | `/api/logout` | Invalida sessão |
 | GET | `/api/dashboard` | products, units, value_cents, low |

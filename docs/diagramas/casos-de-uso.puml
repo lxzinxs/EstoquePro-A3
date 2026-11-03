@@ -1,7 +1,9 @@
 @startuml
 left to right direction
 actor "Administrador de estoque" as Admin
+actor "Novo usuário" as NewUser
 rectangle EstoquePro {
+  usecase "UC13 Cadastrar conta local" as UC13
   usecase "UC01 Autenticar e sair" as UC01
   usecase "UC02 Cadastrar categoria" as UC02
   usecase "UC03 Cadastrar fornecedor" as UC03
@@ -15,6 +17,7 @@ rectangle EstoquePro {
   usecase "UC11 Consultar painel" as UC11
   usecase "UC12 Exportar CSV" as UC12
 }
+NewUser --> UC13
 Admin --> UC01
 Admin --> UC02
 Admin --> UC03

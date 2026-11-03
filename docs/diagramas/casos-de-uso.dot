@@ -13,4 +13,6 @@ U9 [label="UC09 Consultar histórico"]; A->U9;
 U10 [label="UC10 Arquivar produto"]; A->U10;
 U11 [label="UC11 Consultar painel"]; A->U11;
 U12 [label="UC12 Exportar CSV"]; A->U12;
+
+N [label="Novo usuário",shape=box]; U13 [label="UC13 Cadastrar conta local"]; N->U13;
 }

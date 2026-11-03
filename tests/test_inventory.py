@@ -41,6 +41,34 @@ class InventoryTests(unittest.TestCase):
         self.assertTrue(check_password('segredo', encoded))
         self.assertFalse(check_password('outro', encoded))
 
+    def test_register_validation_and_duplicate(self):
+        data = dict(username='Novo.Usuario', password='SenhaNova123', confirm_password='SenhaNova123')
+        user = self.db.register(data)
+        self.assertEqual(user['username'], 'novo.usuario')
+        self.assertEqual(self.db.authenticate('novo.usuario', 'SenhaNova123'), user)
+        with self.assertRaisesRegex(ValidationError, 'já está cadastrado'):
+            self.db.register(data)
+        for changes in [dict(username='ab'), dict(username='nome com espaços'), dict(username='<script>'),
+                        dict(password='curta', confirm_password='curta'), dict(confirm_password='diferente')]:
+            with self.subTest(changes=changes), self.assertRaises(ValidationError):
+                self.db.register({**data, 'username': 'outro.usuario', **changes})
+
+    def test_legacy_demo_migration_preserves_data(self):
+        with self.db.connect() as db:
+            db.execute("UPDATE users SET password_hash=? WHERE username='admin'", (hash_password('EstoquePro@2026'),))
+        before = self.db.products()
+        self.assertTrue(self.db.configure_demo_access())
+        self.assertIsNotNone(self.db.authenticate('admin', 'admin123'))
+        self.assertIsNone(self.db.authenticate('admin', 'EstoquePro@2026'))
+        self.assertEqual(self.db.products(), before)
+        self.assertFalse(self.db.configure_demo_access())
+
+    def test_demo_preserves_custom_password_until_explicit_reset(self):
+        self.assertFalse(self.db.configure_demo_access())
+        self.assertIsNotNone(self.db.authenticate('admin', 'UmaSenhaForte123'))
+        self.assertTrue(self.db.configure_demo_access(reset=True))
+        self.assertIsNotNone(self.db.authenticate('admin', 'admin123'))
+
     def test_product_create_update_search(self):
         product = self.db.products()[0]
         self.assertEqual(product['quantity'], 0)
@@ -254,6 +282,31 @@ class HttpTests(unittest.TestCase):
         for raw in ['invalid', '[]', '{', '"string"']:
             with self.subTest(raw=raw):
                 self.assertEqual(self.request('/api/products', 'POST', raw=raw)[0], 400)
+
+    def test_register_login_and_shared_inventory(self):
+        data = dict(username='Conta.HTTP', password='NovaSenhaHTTP123', confirm_password='NovaSenhaHTTP123')
+        status, headers, body = self.request('/api/register', 'POST', data)
+        self.assertEqual(status, 201)
+        user = json.loads(body)['user']
+        self.assertEqual(user['username'], 'conta.http')
+        self.cookie = headers['Set-Cookie'].split(';')[0]
+        self.csrf = json.loads(body)['csrf']
+        self.assertEqual(self.request('/api/dashboard')[0], 200)
+        self.assertEqual(self.request('/api/register', 'POST', data)[0], 400)
+        self.assertEqual(self.request('/api/logout', 'POST', {})[0], 200)
+        status, _, body = self.request('/api/login', 'POST', dict(username=' CONTA.HTTP ', password='NovaSenhaHTTP123'))
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(body)['user'], user)
+
+    def test_register_rejects_invalid_data_and_cross_site(self):
+        data = dict(username='valid.user', password='Password123', confirm_password='different')
+        self.assertEqual(self.request('/api/register', 'POST', data)[0], 400)
+        connection = http.client.HTTPConnection('127.0.0.1', self.server.server_port, timeout=5)
+        connection.request('POST', '/api/register', json.dumps(data), {'Content-Type': 'application/json', 'Sec-Fetch-Site': 'cross-site'})
+        response = connection.getresponse()
+        self.assertEqual(response.status, 403)
+        response.read()
+        connection.close()
 
     def test_csv_is_authenticated_and_formula_safe(self):
         self.assertEqual(self.request('/api/report.csv')[0], 401)

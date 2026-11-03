@@ -35,7 +35,7 @@ Foco em clareza e integridade, com execução reproduzível.
 
 # Funcionalidades implementadas
 
-- Autenticação e sessão.
+- Abas Entrar/Cadastro, criação de usuário e sessão.
 - Categorias, fornecedores e produtos.
 - Edição cadastral e arquivamento com histórico preservado.
 - Entradas e saídas validadas.
@@ -45,7 +45,7 @@ Foco em clareza e integridade, com execução reproduzível.
 
 # Requisitos e regras
 
-12 requisitos funcionais e 12 não funcionais documentados.
+13 requisitos funcionais e 12 não funcionais documentados.
 
 Código único; preço em centavos; quantidade inteira; saldo não negativo; motivo obrigatório; saldo/evento na mesma transação.
 
@@ -92,7 +92,7 @@ SQLite usa chaves estrangeiras e transação imediata na movimentação.
 
 # Testes e qualidade
 
-20 testes automatizados de domínio/API aprovados nesta validação.
+25 testes automatizados de domínio/API aprovados nesta validação.
 
 Fluxo Playwright aprovado em Chromium: cadastros, edição, busca, movimentações válidas e inválidas, arquivamento, CSV, sessão e logout.
 

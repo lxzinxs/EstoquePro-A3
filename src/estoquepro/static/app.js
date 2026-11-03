@@ -10,7 +10,7 @@ async function api(path, method = 'GET', body) {
   const response = await fetch('/api/' + path, {method, headers: {'Content-Type': 'application/json', 'X-CSRF-Token': state.csrf}, body: body === undefined ? undefined : JSON.stringify(body)});
   const data = await response.json();
   if (!response.ok) {
-    if (response.status === 401 && path !== 'login') showLogin();
+    if (response.status === 401 && !['login', 'register'].includes(path)) showLogin();
     throw new Error(data.error || 'Não foi possível concluir a operação.');
   }
   return data;
@@ -19,15 +19,42 @@ function toast(message, failure = false) {
   const el = $('#toast'); el.textContent = message; el.className = 'toast' + (failure ? ' failure' : ''); el.hidden = false;
   clearTimeout(toast.timer); toast.timer = setTimeout(() => el.hidden = true, 5000);
 }
-function showLogin() { $('#app').hidden = true; $('#login-screen').hidden = false; state.csrf = ''; $('#modal').close(); }
+function showLogin() { $('#app').hidden = true; $('#login-screen').hidden = false; state.csrf = ''; selectAuthTab(false); $('#modal').close(); }
 function enter(session) {
-  state.csrf = session.csrf; $('#account-name').textContent = session.user.username;
+  state.csrf = session.csrf; $('#account-name').textContent = session.user.username; $('.avatar').textContent = session.user.username[0].toUpperCase();
   $('#login-screen').hidden = true; $('#app').hidden = false; loadPage();
 }
 $('#login-form').addEventListener('submit', async (event) => {
   event.preventDefault(); const button = event.target.querySelector('button'); button.disabled = true; $('#login-error').textContent = '';
   try { const data = Object.fromEntries(new FormData(event.target)); const session = await api('login', 'POST', data); event.target.reset(); enter(session); }
   catch (err) { $('#login-error').textContent = err.message; } finally { button.disabled = false; }
+});
+function selectAuthTab(register) {
+  $('#login-form').hidden = register; $('#register-form').hidden = !register;
+  for (const id of ['login', 'register']) {
+    const active = (id === 'register') === register;
+    $('#' + id + '-tab').setAttribute('aria-selected', String(active));
+    $('#' + id + '-tab').tabIndex = active ? 0 : -1;
+  }
+  $('#login-error').textContent = ''; $('#register-error').textContent = '';
+}
+$('#login-tab').onclick = () => selectAuthTab(false);
+$('#register-tab').onclick = () => selectAuthTab(true);
+$('.auth-tabs').addEventListener('keydown', event => {
+  if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+    event.preventDefault();
+    const register = event.key === 'End' || (event.key !== 'Home' && $('#register-form').hidden);
+    selectAuthTab(register); $('#' + (register ? 'register' : 'login') + '-tab').focus();
+  }
+});
+$('#register-form').addEventListener('input', () => { $('#register-error').textContent = ''; });
+$('#register-form').addEventListener('submit', async event => {
+  event.preventDefault(); const button = event.target.querySelector('button');
+  const data = Object.fromEntries(new FormData(event.target)); $('#register-error').textContent = '';
+  if (data.password !== data.confirm_password) { $('#register-error').textContent = 'As senhas não coincidem.'; return; }
+  button.disabled = true;
+  try { const session = await api('register', 'POST', data); event.target.reset(); selectAuthTab(false); enter(session); toast('Conta criada com sucesso.'); }
+  catch (err) { $('#register-error').textContent = err.message; } finally { button.disabled = false; }
 });
 $('#logout').addEventListener('click', async () => { try { await api('logout', 'POST', {}); showLogin(); } catch (e) { toast(e.message, true); } });
 window.addEventListener('hashchange', () => { if (state.csrf) loadPage(); });

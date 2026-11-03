@@ -2,7 +2,7 @@
 
 Ambiente: Linux, Python 3.12.14, Node 24.22.1 para verificação sintática opcional, Playwright 1.62.0 com Chromium do sistema. Teste de navegador usa locale pt-BR e fuso America/Sao_Paulo. Dados de todos os testes são fictícios; suíte de domínio/API e navegador usa bancos temporários separados.
 
-## Unidade e integração HTTP
+## Validação inicial — unidade e integração HTTP
 
 Comando executado na raiz: `python -m unittest discover -s tests -v`.
 
@@ -69,3 +69,16 @@ Backup criado pela API SQLite com servidor em execução; as cinco tabelas foram
 ## Não executado / limitações
 
 Sem teste de carga, auditoria de segurança independente, validação em Windows/macOS, outros navegadores, teste de leitores de tela, revisão de PDF oficial, revisão no template acadêmico ou apresentação ao professor. Não se declara produção, conformidade oficial da A3 ou entrega remota. Nenhum defeito crítico conhecido foi identificado nos fluxos executados.
+
+
+## Correção de acesso e cadastro — 03/11/2026
+
+Após o relato de falha de login em outra instalação, identificou-se que a troca do padrão de senha no código não alterava bancos já criados. A alteração anterior do hash no banco desta máquina não era uma migração distribuída. A correção adiciona migração da antiga senha padrão **somente no modo demo**, preserva senhas personalizadas e disponibiliza `--demo --reset-demo-admin` para redefinição explícita local sem perda de dados.
+
+- `python -m unittest discover -s tests -v`: **25 testes executados e aprovados**, zero falhas, erros ou ignorados; 4,936 s na execução desta revisão.
+- Novos cenários: cadastro persistente, usuário normalizado/duplicado, senha e confirmação inválidas, recusa de origem cruzada, sessão automática da nova conta, login posterior, migração da senha demo antiga, preservação de senha personalizada e reset explícito.
+- `CHROMIUM_PATH=/usr/bin/chromium python tests/browser_smoke.py`: cadastro na nova aba, erro de confirmação, criação e acesso ao painel, logout e todo o fluxo existente aprovados; zero exceções JavaScript. O primeiro ensaio precisou delimitar os seletores ao formulário Entrar, pois agora há dois campos com o rótulo Usuário em painéis distintos.
+- Inicialização real com `--demo --reset-demo-admin` aplicada ao banco atual; dados de estoque preservados. Esse comando deve ser executado no mesmo banco usado pela instalação que ainda não aceita a senha. Um push não atualiza processos e bancos de outra máquina automaticamente.
+- Captura da nova tela em `docs/prototipos/cadastro-desktop.png`. As demais capturas foram regeneradas pelo teste de interface.
+
+A aba Cadastro cria usuários do mesmo negócio, com as mesmas permissões; não cria estoques separados. Cadastro aberto pela tela só é aceito quando o servidor está vinculado a loopback. A conformidade acadêmica permanece provisória.

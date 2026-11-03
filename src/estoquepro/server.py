@@ -110,7 +110,7 @@ class Handler(BaseHTTPRequestHandler):
         if method == 'GET' and path in ('/', '/app.js', '/style.css'):
             filename, mime = {'/': ('index.html', 'text/html'), '/app.js': ('app.js', 'text/javascript'), '/style.css': ('style.css', 'text/css')}[path]
             return self.send(200, (ROOT / 'src/estoquepro/static' / filename).read_bytes(), mime + '; charset=utf-8')
-        if method == 'POST' and path == '/api/login':
+        if method == 'POST' and path in ('/api/login', '/api/register'):
             # A senha e o token só transitam em JSON/cookie, nunca na URL.
             if self.headers.get('Sec-Fetch-Site') == 'cross-site':
                 return self.send(403, {'error': 'Origem não permitida.'})
@@ -126,7 +126,12 @@ class Handler(BaseHTTPRequestHandler):
                 if attempts[1] >= 10:
                     return self.send(429, {'error': 'Muitas tentativas. Aguarde um minuto.'})
                 self.server.attempts[ip] = (attempts[0], attempts[1]+1)
-            user = db.authenticate(username, password)
+            if path == '/api/register':
+                if self.server.server_address[0] not in ('127.0.0.1', '::1'):
+                    return self.send(403, {'error': 'Cadastro de usuários disponível apenas na execução local.'})
+                user = db.register(data)
+            else:
+                user = db.authenticate(username.strip().lower(), password)
             if not user:
                 return self.send(401, {'error': 'Usuário ou senha incorretos.'})
             token, csrf = secrets.token_urlsafe(32), secrets.token_urlsafe(32)
@@ -135,7 +140,7 @@ class Handler(BaseHTTPRequestHandler):
                 self.server.sessions.pop(old_token, None)
                 self.server.sessions[token] = {'user': user, 'csrf': csrf, 'expires': time.time()+28800}
             secure = '; Secure' if os.environ.get('ESTOQUEPRO_SECURE_COOKIE') == '1' else ''
-            return self.send(200, {'user': user, 'csrf': csrf}, headers={'Set-Cookie': f'session={token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800{secure}'})
+            return self.send(201 if path == '/api/register' else 200, {'user': user, 'csrf': csrf}, headers={'Set-Cookie': f'session={token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800{secure}'})
         token, session = self.session()
         if not session:
             return self.send(401, {'error': 'Entre para continuar.'})
@@ -195,6 +200,7 @@ def main():
     parser.add_argument('--port', type=int, default=8000)
     parser.add_argument('--database', default=str(ROOT / 'data/estoquepro.sqlite3'))
     parser.add_argument('--demo', action='store_true', help='Dados fictícios e senha inicial de demonstração')
+    parser.add_argument('--reset-demo-admin', action='store_true', help='Redefinir explicitamente admin para admin123 (somente com --demo local)')
     args = parser.parse_args()
     password = os.environ.get('ESTOQUEPRO_ADMIN_PASSWORD')
     inventory = Inventory(args.database)
@@ -209,7 +215,11 @@ def main():
         parser.error('A senha inicial deve ter de 12 a 256 caracteres.')
     if args.host != '127.0.0.1' and args.demo:
         parser.error('O modo demo só permite --host 127.0.0.1.')
+    if args.reset_demo_admin and (not args.demo or password):
+        parser.error('--reset-demo-admin exige --demo e não pode ser combinado com ESTOQUEPRO_ADMIN_PASSWORD.')
     inventory.initialize(password or 'admin123', args.demo)
+    if args.demo and not password and inventory.configure_demo_access(args.reset_demo_admin):
+        print('Acesso de demonstração do administrador atualizado.', flush=True)
     print(f'EstoquePro em {args.host}:{args.port} — Ctrl+C para encerrar.', flush=True)
     server = Application((args.host, args.port), inventory)
     try:

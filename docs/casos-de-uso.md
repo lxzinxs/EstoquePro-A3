@@ -1,6 +1,6 @@
 # Casos de uso
 
-Ator principal de todos os casos: **Administrador de estoque**. Referência visual: `diagramas/casos-de-uso.puml`.
+Ator principal de UC01–UC12: **Usuário de estoque** (mesmas permissões do administrador). UC13 tem como ator o novo usuário. Referência visual: `diagramas/casos-de-uso.puml`.
 
 ## UC01 — Autenticar e sair
 
@@ -134,3 +134,15 @@ Ator principal de todos os casos: **Administrador de estoque**. Referência visu
 - **Pós-condições:** Arquivo gerado com os produtos ativos e sem alteração do banco.
 - **Requisito:** RF012.
 
+
+
+## UC13 — Cadastrar usuário local
+
+- **Objetivo:** obter acesso ao estoque local do negócio.
+- **Ator principal:** novo usuário.
+- **Pré-condições:** aplicação iniciada em loopback; sem necessidade de sessão anterior.
+- **Fluxo principal:** selecionar Cadastro; informar usuário, senha e confirmação; enviar; validar e persistir hash; criar sessão; abrir painel com o nome da conta.
+- **Fluxos alternativos:** voltar à aba Entrar sem cadastrar; corrigir campos e tentar novamente; posteriormente sair e entrar com a nova conta.
+- **Exceções:** nome já cadastrado, senha curta ou confirmação divergente retornam erro sem inserir usuário; tentativa de origem cruzada retorna 403; limite de tentativas retorna 429; servidor fora de loopback recusa cadastro.
+- **Pós-condições:** usuário persistido e sessão autenticada com acesso ao mesmo estoque dos demais usuários.
+- **Requisito:** RF013.

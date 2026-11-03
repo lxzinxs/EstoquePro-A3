@@ -12,7 +12,7 @@ Oferecer uma ferramenta local, simples e verificável para o administrador de es
 
 ## Engenharia de requisitos e casos de uso
 
-Foram definidos 12 requisitos funcionais e 12 não funcionais em [requisitos](requisitos.md), com prioridades, entradas, processamento, saídas, regras e critérios verificáveis. Os [12 casos de uso](casos-de-uso.md) descrevem pré-condições, fluxo principal, alternativas, exceções e pós-condições. O ator único é o administrador de estoque.
+Foram definidos 13 requisitos funcionais e 12 não funcionais em [requisitos](requisitos.md), com prioridades, entradas, processamento, saídas, regras e critérios verificáveis. Os [13 casos de uso](casos-de-uso.md) descrevem pré-condições, fluxo principal, alternativas, exceções e pós-condições. Os atores são o usuário de estoque (mesmas permissões do administrador) e o novo usuário que cadastra conta local.
 
 ## Modelagem e arquitetura
 
@@ -48,7 +48,7 @@ O [backlog](../backlog/backlog.csv) relaciona requisitos e tarefas, com status, 
 
 ## Considerações finais
 
-O MVP realiza o ciclo de catálogo e estoque com persistência e trilha de movimentações, acompanhado de testes e materiais de demonstração. A validação acadêmica final depende do PDF, template, revisão dos integrantes e confirmação da apresentação. Evoluções possíveis após o escopo atual incluem perfis de usuário, paginação, múltiplos depósitos, incorporação do arquivo original da marca e recuperação de senha; não são funcionalidades entregues.
+O MVP realiza o ciclo de catálogo e estoque com persistência e trilha de movimentações, acompanhado de testes e materiais de demonstração. A validação acadêmica final depende do PDF, template, revisão dos integrantes e confirmação da apresentação. Evoluções possíveis após o escopo atual incluem perfis de permissão, paginação, múltiplos depósitos, incorporação do arquivo original da marca e recuperação de senha; não são funcionalidades entregues.
 
 ## Referências técnicas
 
@@ -69,8 +69,8 @@ Não foram inventados artigos, entrevistas, integrantes, parecer do professor ou
 |---|---|---|
 | Software executável e persistente | src/, database/, README, testes | Implementado e validado localmente |
 | Código completo e organizado | Separação domínio/HTTP/interface | Preparado no checkout |
-| ≥8 requisitos funcionais e RNF | 12 RF e 12 RNF | Documentado |
-| Casos de uso e fluxos alternativos | 12 UC | Documentado |
+| ≥8 requisitos funcionais e RNF | 13 RF e 12 RNF | Documentado |
+| Casos de uso e fluxos alternativos | 13 UC | Documentado |
 | UML e modelo de dados | Fontes PlantUML/Mermaid e esquema SQLite | Produzido para o MVP |
 | Interface e protótipos | Capturas desktop/mobile | Produzido |
 | Testes automatizados | unittest e Playwright | Resultado no relatório de testes |
