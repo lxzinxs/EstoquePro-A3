@@ -1,0 +1,2 @@
+# Ferramenta opcional; a aplicação e os testes unittest não têm dependências externas.
+playwright==1.62.0
