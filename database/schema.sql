@@ -1,0 +1,26 @@
+PRAGMA foreign_keys = ON;
+CREATE TABLE IF NOT EXISTS users (
+ id INTEGER PRIMARY KEY, username TEXT NOT NULL UNIQUE,
+ password_hash TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS categories (
+ id INTEGER PRIMARY KEY, name TEXT NOT NULL COLLATE NOCASE UNIQUE CHECK(length(trim(name)) BETWEEN 1 AND 80)
+);
+CREATE TABLE IF NOT EXISTS suppliers (
+ id INTEGER PRIMARY KEY, name TEXT NOT NULL COLLATE NOCASE UNIQUE CHECK(length(trim(name)) BETWEEN 1 AND 80)
+);
+CREATE TABLE IF NOT EXISTS products (
+ id INTEGER PRIMARY KEY, sku TEXT NOT NULL COLLATE NOCASE UNIQUE,
+ name TEXT NOT NULL, category_id INTEGER NOT NULL REFERENCES categories(id),
+ supplier_id INTEGER REFERENCES suppliers(id), price_cents INTEGER NOT NULL CHECK(price_cents >= 0),
+ minimum INTEGER NOT NULL CHECK(minimum >= 0), quantity INTEGER NOT NULL DEFAULT 0 CHECK(quantity >= 0),
+ active INTEGER NOT NULL DEFAULT 1 CHECK(active IN (0,1)), created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS movements (
+ id INTEGER PRIMARY KEY, product_id INTEGER NOT NULL REFERENCES products(id),
+ user_id INTEGER NOT NULL REFERENCES users(id), kind TEXT NOT NULL CHECK(kind IN ('entrada','saida')),
+ quantity INTEGER NOT NULL CHECK(quantity > 0), note TEXT NOT NULL,
+ balance_after INTEGER NOT NULL CHECK(balance_after >= 0), created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_movements_product ON movements(product_id, id DESC);
+PRAGMA user_version = 1;
