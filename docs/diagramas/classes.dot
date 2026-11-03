@@ -1,0 +1,13 @@
+digraph G {
+graph [bgcolor="#f4f6fa", pad="0.4", nodesep="0.5", ranksep="0.8", fontname="DejaVu Sans"]; node [fontname="DejaVu Sans", fontsize=11, shape=box, style="rounded,filled", fillcolor="white", color="#91b1dd", margin="0.2,0.15"]; edge [fontname="DejaVu Sans", fontsize=9, color="#2475ce"]; rankdir=TB; node [shape=record,style=filled];
+ T [label="{ThreadingHTTPServer|Servidor concorrente}"];
+ B [label="{BaseHTTPRequestHandler|Tratamento HTTP}"];
+ A [label="{Application|+ inventory: Inventory\l+ sessions: dict\l+ attempts: dict\l+ lock: Lock\l|+ __init__(address, inventory)\l}"];
+ H [label="{Handler|+ dispatch(method)\l+ route(method)\l+ payload(): dict\l+ session(): tuple\l+ send(status, data, type, headers)\l}"];
+ I [label="{Inventory|+ path: str\l|+ initialize(password, demo)\l+ connect(): Connection\l+ authenticate(username, password)\l+ lookup(table)\l+ add_lookup(table, data)\l+ products(query, category, low)\l+ save_product(data, product_id)\l+ move(data, user_id)\l+ archive(product_id)\l+ movements()\l+ dashboard()\l}"];
+ A->T [arrowhead=empty,label="herda"];
+ H->B [arrowhead=empty,label="herda"];
+ A->I [label="1 contém 1"];
+ A->H [label="1 atende 0..* "];
+ H->I [label="delega"];
+}

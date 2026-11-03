@@ -1,0 +1,46 @@
+classDiagram
+class Inventory {
+  +str path
+  +connect() Connection
+  +initialize(password, demo)
+  +authenticate(username, password) dict
+  +lookup(table) list
+  +add_lookup(table, data) int
+  +products(query, category, low) list
+  +save_product(data, product_id) int
+  +move(data, user_id) int
+  +archive(product_id)
+  +movements() list
+  +dashboard() dict
+}
+class Application {
+  +Inventory inventory
+  +dict sessions
+  +dict attempts
+  +Lock lock
+}
+class ThreadingHTTPServer
+class Handler {
+  +dispatch(method)
+  +route(method)
+  +payload() dict
+  +session() tuple
+  +send(status, data, content_type, headers)
+}
+class BaseHTTPRequestHandler
+class ValidationError
+class ValueError
+class Connection {
+  +execute(sql, args)
+  +commit()
+  +rollback()
+}
+ThreadingHTTPServer <|-- Application
+BaseHTTPRequestHandler <|-- Handler
+ValueError <|-- ValidationError
+Application "1" --> "1" Inventory : contém
+Application "1" --> "0..*" Handler : atende requisições
+Handler --> Inventory : delega regras
+Inventory --> Connection : abre por operação
+Inventory ..> ValidationError : lança
+note for Inventory "Classe de serviço e repositório.\nDados cadastrais são linhas SQLite/dicionários,\nnão classes de entidade adicionais."

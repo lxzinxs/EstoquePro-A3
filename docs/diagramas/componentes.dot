@@ -1,0 +1,14 @@
+digraph G {
+graph [bgcolor="#f4f6fa", pad="0.4", nodesep="0.5", ranksep="0.8", fontname="DejaVu Sans"]; node [fontname="DejaVu Sans", fontsize=11, shape=box, style="rounded,filled", fillcolor="white", color="#91b1dd", margin="0.2,0.15"]; edge [fontname="DejaVu Sans", fontsize=9, color="#2475ce"]; rankdir=LR;
+ U [label="Administrador
+Navegador"];
+ UI [label="Interface
+HTML / CSS / JavaScript"];
+ H [label="Handler / server.py
+HTTP, sessão e CSRF"];
+ I [label="Inventory / domain.py
+Validação e transações"];
+ DB [label="SQLite
+5 tabelas", shape=cylinder];
+ U->UI; UI->H [label="Fetch, mesma origem"]; H->I; I->DB [label="SQL parametrizado"];
+}

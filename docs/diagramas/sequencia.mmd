@@ -1,0 +1,29 @@
+sequenceDiagram
+  actor A as Administrador
+  participant UI as Interface web
+  participant H as Handler
+  participant I as Inventory
+  participant DB as SQLite
+  A->>UI: Preenche saída e motivo
+  UI->>H: POST /api/movements + cookie + CSRF
+  H->>H: Valida sessão, CSRF e JSON
+  alt sessão/CSRF inválidos
+    H-->>UI: 401/403
+  else credenciais válidas
+    H->>I: move(data, user_id)
+    I->>I: Valida campos e quantidade
+    I->>DB: BEGIN IMMEDIATE e SELECT saldo
+    alt produto inativo ou saldo insuficiente
+      I->>DB: ROLLBACK
+      I-->>H: ValidationError
+      H-->>UI: 400 + mensagem
+    else saída válida
+      I->>DB: UPDATE products + INSERT movements
+      I->>DB: COMMIT
+      I-->>H: movement_id
+      H-->>UI: 201 + id
+      UI->>H: GET produtos/painel/histórico
+      H-->>UI: Dados atualizados
+    end
+  end
+  UI-->>A: Mensagem e saldo / erro

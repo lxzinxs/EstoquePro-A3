@@ -1,0 +1,16 @@
+digraph G {
+graph [bgcolor="#f4f6fa", pad="0.4", nodesep="0.5", ranksep="0.8", fontname="DejaVu Sans"]; node [fontname="DejaVu Sans", fontsize=11, shape=box, style="rounded,filled", fillcolor="white", color="#91b1dd", margin="0.2,0.15"]; edge [fontname="DejaVu Sans", fontsize=9, color="#2475ce"]; rankdir=LR; A [label="Administrador
+de estoque",shape=box]; node [shape=ellipse];
+U1 [label="UC01 Autenticar e sair"]; A->U1;
+U2 [label="UC02 Cadastrar categoria"]; A->U2;
+U3 [label="UC03 Cadastrar fornecedor"]; A->U3;
+U4 [label="UC04 Cadastrar produto"]; A->U4;
+U5 [label="UC05 Editar produto"]; A->U5;
+U6 [label="UC06 Consultar e filtrar"]; A->U6;
+U7 [label="UC07 Registrar entrada"]; A->U7;
+U8 [label="UC08 Registrar saída"]; A->U8;
+U9 [label="UC09 Consultar histórico"]; A->U9;
+U10 [label="UC10 Arquivar produto"]; A->U10;
+U11 [label="UC11 Consultar painel"]; A->U11;
+U12 [label="UC12 Exportar CSV"]; A->U12;
+}

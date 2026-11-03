@@ -1,0 +1,31 @@
+@startuml
+left to right direction
+actor "Administrador de estoque" as Admin
+rectangle EstoquePro {
+  usecase "UC01 Autenticar e sair" as UC01
+  usecase "UC02 Cadastrar categoria" as UC02
+  usecase "UC03 Cadastrar fornecedor" as UC03
+  usecase "UC04 Cadastrar produto" as UC04
+  usecase "UC05 Editar produto" as UC05
+  usecase "UC06 Consultar e filtrar" as UC06
+  usecase "UC07 Registrar entrada" as UC07
+  usecase "UC08 Registrar saída" as UC08
+  usecase "UC09 Consultar histórico" as UC09
+  usecase "UC10 Arquivar produto" as UC10
+  usecase "UC11 Consultar painel" as UC11
+  usecase "UC12 Exportar CSV" as UC12
+}
+Admin --> UC01
+Admin --> UC02
+Admin --> UC03
+Admin --> UC04
+Admin --> UC05
+Admin --> UC06
+Admin --> UC07
+Admin --> UC08
+Admin --> UC09
+Admin --> UC10
+Admin --> UC11
+Admin --> UC12
+note bottom of UC08 : Valida saldo e grava histórico\nna mesma transação.
+@enduml

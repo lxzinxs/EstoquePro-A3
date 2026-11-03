@@ -1,0 +1,8 @@
+flowchart LR
+  U[Administrador no navegador] --> UI[HTML + CSS + JavaScript]
+  UI -->|Fetch mesma origem / Cookie e CSRF| HTTP[server.py / Handler]
+  HTTP -->|Validações e operações| DOMAIN[domain.py / Inventory]
+  DOMAIN -->|SQL parametrizado e transações| DB[(SQLite local)]
+  HTTP -->|CSV autenticado| UI
+  TEST[unittest e Playwright] -. valida .-> HTTP
+  TEST -. valida .-> DOMAIN

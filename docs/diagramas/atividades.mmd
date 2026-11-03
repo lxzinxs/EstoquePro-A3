@@ -1,0 +1,17 @@
+flowchart TD
+  A([Início]) --> B[Entrar no sistema]
+  B --> C{Autenticado?}
+  C -- Não --> B
+  C -- Sim --> D[Selecionar nova movimentação]
+  D --> E[Escolher produto, tipo, quantidade e motivo]
+  E --> F{Campos válidos?}
+  F -- Não --> G[Exibir erro]
+  G --> E
+  F -- Sim --> H[Iniciar transação e consultar produto ativo]
+  H --> I{Produto e saldo permitem operação?}
+  I -- Não --> J[Rollback e mensagem]
+  J --> E
+  I -- Sim --> K[Atualizar saldo e inserir histórico]
+  K --> L[Commit]
+  L --> M[Atualizar painel e histórico]
+  M --> N([Fim])

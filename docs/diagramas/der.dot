@@ -1,0 +1,12 @@
+digraph G {
+graph [bgcolor="#f4f6fa", pad="0.4", nodesep="0.5", ranksep="0.8", fontname="DejaVu Sans"]; node [fontname="DejaVu Sans", fontsize=11, shape=box, style="rounded,filled", fillcolor="white", color="#91b1dd", margin="0.2,0.15"]; edge [fontname="DejaVu Sans", fontsize=9, color="#2475ce"]; rankdir=LR; node [shape=record,style=filled];
+ USERS [label="{users|id PK INTEGER\lusername UK TEXT\lpassword_hash TEXT\lcreated_at TEXT\l}"];
+ CATEGORIES [label="{categories|id PK INTEGER\lname UK TEXT\l}"];
+ SUPPLIERS [label="{suppliers|id PK INTEGER\lname UK TEXT\l}"];
+ PRODUCTS [label="{products|id PK INTEGER\lsku UK TEXT\lname TEXT\lcategory_id FK INTEGER\lsupplier_id FK INTEGER (opcional)\lprice_cents INTEGER\lminimum INTEGER\lquantity INTEGER\lactive INTEGER\lcreated_at TEXT\l}"];
+ MOVEMENTS [label="{movements|id PK INTEGER\lproduct_id FK INTEGER\luser_id FK INTEGER\lkind TEXT\lquantity INTEGER\lnote TEXT\lbalance_after INTEGER\lcreated_at TEXT\l}"];
+ CATEGORIES->PRODUCTS [taillabel="1",headlabel="0..*",label="classifica"];
+ SUPPLIERS->PRODUCTS [taillabel="0..1",headlabel="0..*",label="abastece"];
+ PRODUCTS->MOVEMENTS [taillabel="1",headlabel="0..*",label="recebe"];
+ USERS->MOVEMENTS [taillabel="1",headlabel="0..*",label="registra"];
+}

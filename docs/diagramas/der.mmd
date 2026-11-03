@@ -1,0 +1,41 @@
+erDiagram
+  USERS ||--o{ MOVEMENTS : registra
+  CATEGORIES ||--o{ PRODUCTS : classifica
+  SUPPLIERS o|--o{ PRODUCTS : abastece
+  PRODUCTS ||--o{ MOVEMENTS : recebe
+  USERS {
+    INTEGER id PK
+    TEXT username UK
+    TEXT password_hash
+    TEXT created_at
+  }
+  CATEGORIES {
+    INTEGER id PK
+    TEXT name UK
+  }
+  SUPPLIERS {
+    INTEGER id PK
+    TEXT name UK
+  }
+  PRODUCTS {
+    INTEGER id PK
+    TEXT sku UK
+    TEXT name
+    INTEGER category_id FK
+    INTEGER supplier_id FK
+    INTEGER price_cents
+    INTEGER minimum
+    INTEGER quantity
+    INTEGER active
+    TEXT created_at
+  }
+  MOVEMENTS {
+    INTEGER id PK
+    INTEGER product_id FK
+    INTEGER user_id FK
+    TEXT kind
+    INTEGER quantity
+    TEXT note
+    INTEGER balance_after
+    TEXT created_at
+  }
