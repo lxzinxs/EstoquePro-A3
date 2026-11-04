@@ -1,0 +1,250 @@
+erDiagram
+  Organization {
+    INTEGER id PK
+    TEXT name
+    TEXT plan
+    DATETIMEFIELD trial_ends_at
+    DATETIMEFIELD paid_until
+    BOOLEANFIELD renewal_enabled
+    TEXT logo_file
+    INTEGER billing_parent_id FK
+    TEXT logo_url
+    DATETIMEFIELD created_at
+  }
+  Organization o|--o{ Organization : billing_parent
+  Membership {
+    INTEGER id PK
+    INTEGER organization_id FK
+    INTEGER user_id FK
+    TEXT role
+  }
+  Organization ||--o{ Membership : organization
+  User ||--o{ Membership : user
+  Company {
+    INTEGER id PK
+    INTEGER organization_id FK
+    TEXT name
+  }
+  Organization ||--o{ Company : organization
+  Location {
+    INTEGER id PK
+    INTEGER organization_id FK
+    INTEGER company_id FK
+    TEXT name
+    TEXT kind
+  }
+  Organization ||--o{ Location : organization
+  Company ||--o{ Location : company
+  Category {
+    INTEGER id PK
+    INTEGER organization_id FK
+    TEXT name
+  }
+  Organization ||--o{ Category : organization
+  Supplier {
+    INTEGER id PK
+    INTEGER organization_id FK
+    TEXT name
+    TEXT email
+    TEXT phone
+  }
+  Organization ||--o{ Supplier : organization
+  Product {
+    INTEGER id PK
+    INTEGER organization_id FK
+    TEXT sku
+    TEXT name
+    INTEGER category_id FK
+    INTEGER supplier_id FK
+    TEXT barcode
+    DECIMALFIELD price
+    DECIMALFIELD average_cost
+    INTEGER minimum
+    INTEGER lead_days
+    BOOLEANFIELD active
+  }
+  Organization ||--o{ Product : organization
+  Category ||--o{ Product : category
+  Supplier o|--o{ Product : supplier
+  Lot {
+    INTEGER id PK
+    INTEGER organization_id FK
+    INTEGER product_id FK
+    INTEGER location_id FK
+    TEXT code
+    DATEFIELD expiry
+    INTEGER quantity
+  }
+  Organization ||--o{ Lot : organization
+  Product ||--o{ Lot : product
+  Location ||--o{ Lot : location
+  Movement {
+    INTEGER id PK
+    INTEGER organization_id FK
+    INTEGER product_id FK
+    INTEGER location_id FK
+    INTEGER actor_id FK
+    TEXT kind
+    INTEGER quantity
+    DECIMALFIELD unit_cost
+    TEXT note
+    TEXT allocations
+    DATETIMEFIELD created_at
+  }
+  Organization ||--o{ Movement : organization
+  Product ||--o{ Movement : product
+  Location ||--o{ Movement : location
+  User ||--o{ Movement : actor
+  PurchaseOrder {
+    INTEGER id PK
+    INTEGER organization_id FK
+    INTEGER supplier_id FK
+    INTEGER location_id FK
+    TEXT status
+    DATETIMEFIELD created_at
+    DATETIMEFIELD received_at
+  }
+  Organization ||--o{ PurchaseOrder : organization
+  Supplier ||--o{ PurchaseOrder : supplier
+  Location ||--o{ PurchaseOrder : location
+  PurchaseLine {
+    INTEGER id PK
+    INTEGER order_id FK
+    INTEGER product_id FK
+    INTEGER quantity
+    DECIMALFIELD unit_cost
+    TEXT lot_code
+    DATEFIELD expiry
+  }
+  PurchaseOrder ||--o{ PurchaseLine : order
+  Product ||--o{ PurchaseLine : product
+  Transfer {
+    INTEGER id PK
+    INTEGER organization_id FK
+    INTEGER source_id FK
+    INTEGER destination_id FK
+    INTEGER product_id FK
+    INTEGER quantity
+    TEXT allocations
+    TEXT status
+    INTEGER actor_id FK
+    INTEGER confirmed_by_id FK
+    DATETIMEFIELD created_at
+  }
+  Organization ||--o{ Transfer : organization
+  Location ||--o{ Transfer : source
+  Location ||--o{ Transfer : destination
+  Product ||--o{ Transfer : product
+  User ||--o{ Transfer : actor
+  User o|--o{ Transfer : confirmed_by
+  Ledger {
+    INTEGER id PK
+    INTEGER organization_id FK
+    TEXT kind
+    TEXT description
+    DECIMALFIELD amount
+    DATEFIELD due_date
+    TEXT source_key
+    DATETIMEFIELD created_at
+  }
+  Organization ||--o{ Ledger : organization
+  Payment {
+    INTEGER id PK
+    INTEGER ledger_id FK
+    DECIMALFIELD amount
+    DATEFIELD date
+    INTEGER actor_id FK
+  }
+  Ledger ||--o{ Payment : ledger
+  User ||--o{ Payment : actor
+  Invoice {
+    INTEGER id PK
+    INTEGER organization_id FK
+    TEXT key
+    TEXT number
+    DECIMALFIELD total
+    DATETIMEFIELD imported_at
+  }
+  Organization ||--o{ Invoice : organization
+  Quote {
+    INTEGER id PK
+    INTEGER organization_id FK
+    INTEGER product_id FK
+    INTEGER supplier_id FK
+    TEXT round_key
+    DECIMALFIELD price
+    DATETIMEFIELD created_at
+  }
+  Organization ||--o{ Quote : organization
+  Product ||--o{ Quote : product
+  Supplier ||--o{ Quote : supplier
+  StockCount {
+    INTEGER id PK
+    INTEGER organization_id FK
+    INTEGER location_id FK
+    INTEGER product_id FK
+    INTEGER lot_id FK
+    INTEGER counted
+    INTEGER actor_id FK
+    INTEGER closed_by_id FK
+    TEXT status
+  }
+  Organization ||--o{ StockCount : organization
+  Location ||--o{ StockCount : location
+  Product ||--o{ StockCount : product
+  Lot ||--o{ StockCount : lot
+  User ||--o{ StockCount : actor
+  User o|--o{ StockCount : closed_by
+  Audit {
+    INTEGER id PK
+    INTEGER organization_id FK
+    INTEGER actor_id FK
+    TEXT action
+    TEXT details
+    DATETIMEFIELD created_at
+  }
+  Organization ||--o{ Audit : organization
+  User o|--o{ Audit : actor
+  Job {
+    INTEGER id PK
+    INTEGER organization_id FK
+    TEXT kind
+    TEXT status
+    TEXT payload
+    TEXT result_file
+    TEXT error
+    INTEGER attempts
+    DATETIMEFIELD available_at
+    DATETIMEFIELD started_at
+    DATETIMEFIELD finished_at
+    DATETIMEFIELD created_at
+    INTEGER requested_by_id FK
+  }
+  Organization ||--o{ Job : organization
+  User o|--o{ Job : requested_by
+  Schedule {
+    INTEGER id PK
+    INTEGER organization_id FK
+    TEXT kind
+    INTEGER interval_hours
+    DATETIMEFIELD next_run
+    BOOLEANFIELD enabled
+  }
+  Organization ||--o{ Schedule : organization
+  Creator {
+    INTEGER id PK
+    INTEGER user_id FK
+  }
+  User ||--o{ Creator : user
+  LegacyImport {
+    INTEGER id PK
+    TEXT digest
+    INTEGER organization_id FK
+    DATETIMEFIELD created_at
+  }
+  Organization ||--o{ LegacyImport : organization
+  LoginThrottle {
+    TEXT key PK
+    INTEGER attempts
+    DATETIMEFIELD window
+  }

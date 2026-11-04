@@ -1,111 +1,88 @@
 # EstoquePro
 
-Sistema web de gerenciamento de estoque para pequenos negócios. Projeto acadêmico A3 de Projeto e Engenharia de Software, iniciado em 03/10/2026.
+Gestão de estoque com **Django, PostgreSQL e interface HTML/CSS/JavaScript**. Nome mantido para a apresentação acadêmica. A versão antiga SQLite foi preservada, mas não é mais o ponto de entrada principal.
 
-## Executar
+## Executar localmente (bash, fish ou PowerShell)
 
-Requer **Python 3.12 ou superior** e um navegador moderno. A aplicação e os testes de domínio/API usam somente a biblioteca padrão: não há dependências obrigatórias para instalar.
+Requisitos: Python 3.12+, Docker disponível e navegador. Na pasta do repositório:
 
-```bash
-cd /workspace/EstoquePro-A3
-PYTHONPATH=src python -m estoquepro.server --demo
+```text
+python -m venv .venv
 ```
 
-Em um computador local, abra o endereço HTTP do servidor na porta **8000**. Login de demonstração: **admin** / **admin123**. O modo demo é restrito à interface de loopback. Na nuvem, a validação é feita com requisições locais; este projeto não publica uma prévia web automaticamente.
+Linux/fish/bash:
 
-No Windows PowerShell, na pasta do projeto:
+```sh
+.venv/bin/python -m pip install -r requirements.txt
+python scripts/dev.py setup
+python scripts/dev.py import_legacy data/estoquepro.sqlite3 --name "EstoquePro apresentação"
+python scripts/dev.py provision_creator --username Lxzinxs
+python scripts/dev.py runserver 127.0.0.1:8000 --noreload
+```
+
+Windows PowerShell (Docker Desktop em execução):
 
 ```powershell
-$env:PYTHONPATH = "src"
-python -m estoquepro.server --demo
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+python scripts/dev.py setup
+python scripts/dev.py import_legacy data/estoquepro.sqlite3 --name "EstoquePro apresentação"
+python scripts/dev.py provision_creator --username Lxzinxs
+python scripts/dev.py runserver 127.0.0.1:8000 --noreload
 ```
 
-O banco é criado em `data/estoquepro.sqlite3` e os dados permanecem após reiniciar. Dados fictícios só são inseridos se categorias, fornecedores, produtos e movimentações estiverem vazios. No modo `--demo`, a senha padrão antiga do administrador é migrada para `admin123`. Senhas personalizadas são preservadas, salvo redefinição explícita descrita abaixo. Encerre com Ctrl+C.
+`import_legacy` é opcional: use apenas se o SQLite antigo existir. Não apaga o arquivo original e não duplica uma importação idêntica. Havendo nome de usuário conflitante, interrompe sem sobrescrever dados. Em banco novo, você pode criar seu negócio pela página Cadastro. O comando `provision_creator` solicita senha e confirmação sem eco; não passe a senha em argumentos nem a grave no Git. Existe apenas um cargo Criador. Em outra máquina, provisione novamente o seu usuário; credenciais/bancos locais não são enviados ao GitHub.
 
-Para começar sem dados fictícios, use um banco novo e defina `ESTOQUEPRO_ADMIN_PASSWORD` com 12 a 256 caracteres por um mecanismo seguro do seu ambiente. Execute sem `--demo`; não registre senhas no Git ou em comandos compartilhados. Para separar bancos, use `--database /caminho/arquivo.sqlite3`. Isso não altera a senha de bancos existentes.
+O servidor é acessado pela porta 8000 no navegador local. Encerre o servidor antigo antes de usar a mesma porta. Em onboarding na nuvem, validação e acesso são internos; não há publicação de prévia automática.
 
-## Não consigo entrar / cadastrar usuário
+Em outro terminal, execute o worker para relatórios, exportações de backup e agendamentos:
 
-Após atualizar o código, encerre o servidor antigo e reinicie. Para garantir o acesso **admin / admin123** no banco que você usa, execute uma vez:
-
-```bash
-PYTHONPATH=src python -m estoquepro.server --demo --reset-demo-admin
+```sh
+python scripts/dev.py runworker
 ```
 
-No Windows PowerShell:
+Para processar uma única tarefa: `python scripts/dev.py runworker --once`.
 
-```powershell
-$env:PYTHONPATH = "src"
-python -m estoquepro.server --demo --reset-demo-admin
-```
+O helper guarda configuração de desenvolvimento e senha aleatória do PostgreSQL em `data/`, ignorado pelo Git. Não compartilhe esses arquivos. Não remova o volume do PostgreSQL ou o diretório `data` para resolver problemas de login. O identificador interno do container local é `nerythstock-postgres`, preservado para não perder o volume criado durante a migração; a marca exibida é EstoquePro.
 
-Se usa `--database`, passe **o mesmo caminho do banco existente**. O comando redefine apenas a senha de `admin`: preserva usuários, produtos, saldos e histórico. É restrito ao modo demo local e não pode ser combinado com `ESTOQUEPRO_ADMIN_PASSWORD`. Não é necessário apagar `data/` ou recriar o banco. Nos próximos inícios, basta `--demo`.
+## Recursos da nova versão
 
-Na tela inicial, selecione **Cadastro**, informe usuário, senha de pelo menos oito caracteres e confirmação. A conta é persistida e abre o painel automaticamente. Todos os usuários têm o mesmo perfil de gestão e compartilham o estoque. O cadastro pela tela só funciona quando o servidor está vinculado a loopback; não é um cadastro público para operação na Internet.
+- Organizações isoladas, equipe com Membro/Admin/Master e cargo global exclusivo Criador.
+- Login, logout, troca e recuperação de senha, CSRF, limitação de tentativas e auditoria.
+- Produtos, categorias, fornecedores, filiais, locais/pontos de atendimento e códigos de barras.
+- Entradas/saídas, custo médio ponderado, lotes/validade FEFO e movimentação em lote atômica.
+- Pedidos de compra com recebimento idempotente; transferências com confirmação.
+- Contas a pagar/receber, baixas parciais, caixa por período, cotações e inventário cego.
+- Cobertura, Curva ABC, sugestões por regras locais e pedido sugerido com compartilhamento manual por WhatsApp.
+- Histórico paginado, CSV/Excel/PDF, etiquetas Code128, logo em PDFs e tarefas em segundo plano.
+- Básico de um mês/1 conta/50 produtos; Completo sem quota comercial, com vigência definida pelo Criador enquanto não há gateway.
 
-## O que funciona
-
-- Abas Entrar e Cadastro, criação de usuário com confirmação de senha, sessão de oito horas e logout.
-- Cadastro de categorias e fornecedores por nome.
-- Cadastro, pesquisa e edição de produtos com código único, vínculos, preço e estoque mínimo.
-- Entradas e saídas atômicas com motivo, usuário, data e saldo após a operação.
-- Bloqueio de saldo negativo; arquivamento de produtos com saldo zero, preservando o histórico.
-- Painel, filtro de estoque baixo e exportação CSV do estoque ativo.
-- Interface responsiva em português, sem serviços externos de fontes ou scripts.
-
-O preço é de referência; não é um sistema fiscal ou de custeio. Há um único perfil administrador. Não há recuperação de senha por e-mail, edição de categorias/fornecedores, edição do histórico ou restauração de produto arquivado na interface.
+Os detalhes, critérios, limites e pendências estão em [MIGRACAO_DJANGO.md](docs/MIGRACAO_DJANGO.md). **O produto ainda não está homologado para venda.** Google Drive, gateway, suporte e notificações externas não estão ativos; transferências usam atualização periódica, não sincronização instantânea. Domínio, e-mail e WhatsApp de suporte foram deixados desativados a pedido do usuário.
 
 ## Testes
 
-```bash
-python -m unittest discover -s tests -v
-node --check src/estoquepro/static/app.js  # opcional; Node só é necessário para esta verificação
+```sh
+python scripts/dev.py test inventory.tests --noinput
 ```
 
-Teste de interface opcional, com Playwright e Chromium (o aplicativo não depende deles):
+Testes usam PostgreSQL de teste separado e verificam isolamento, permissões, Criador exclusivo, concorrência, FEFO, custos, pedidos, financeiro, NF-e, importação legada, filas e exportações. A conta local do PostgreSQL de desenvolvimento permite criar banco de teste; a conta de produção deve ter privilégios reduzidos e uma conta separada para migrações/testes.
 
-```bash
-python -m pip install -r requirements-browser.txt
-python -m playwright install chromium
-python tests/browser_smoke.py
-# Ou Chromium do sistema:
-CHROMIUM_PATH=/usr/bin/chromium python tests/browser_smoke.py
+Navegador opcional:
+
+```sh
+.venv/bin/python -m pip install -r requirements-browser.txt
+python scripts/dev.py test inventory.tests_browser --noinput
 ```
 
-O teste de navegador usa um banco temporário e gera capturas em `docs/prototipos/`. Os testes não usam o banco de desenvolvimento. Ambientes que bloqueiam sockets precisam permitir servidor e cliente HTTP locais para os testes de API e navegador.
+No Windows, use `.venv\Scripts\python.exe` para instalar. Defina `CHROMIUM_PATH` se o Chromium não estiver em `/usr/bin/chromium`, ou adapte o teste para o navegador instalado pelo Playwright. Capturas em `docs/prototipos/django-desktop.png` e `django-mobile.png`.
 
-## Organização e materiais
+## Produção e configuração
 
-| Caminho | Conteúdo |
-|---|---|
-| `src/estoquepro/domain.py` | Validação, autenticação e transações SQLite |
-| `src/estoquepro/server.py` | API HTTP, sessões, CSRF e arquivos estáticos |
-| `src/estoquepro/static/` | Interface HTML, CSS e JavaScript |
-| `database/schema.sql` | Esquema versionado inicial, chaves e restrições |
-| `tests/` | Testes automatizados de domínio, API e navegador |
-| [docs/planejamento.md](docs/planejamento.md) | Problema, escopo, arquitetura e cronograma |
-| [docs/requisitos.md](docs/requisitos.md) | RF, RNF, regras e aceitação |
-| [docs/casos-de-uso.md](docs/casos-de-uso.md) | Fluxos principais, alternativos e exceções |
-| [docs/diagramas](docs/diagramas) | Fontes UML/DER e visualização local |
-| [docs/operacao.md](docs/operacao.md) | Instalação, API, backup e recuperação |
-| [docs/documentacao-academica.md](docs/documentacao-academica.md) | Documento acadêmico provisório e conformidade |
-| [docs/testes/resultado.md](docs/testes/resultado.md) | Evidências e limites da validação |
-| [backlog/backlog.csv](backlog/backlog.csv) | Backlog importável |
-| [apresentacao/apresentacao.md](apresentacao/apresentacao.md) | Slides em Markdown e roteiro |
+`config/settings.py` exige `DJANGO_SECRET_KEY` fora do modo de desenvolvimento. Configure `PG*`, `DJANGO_ALLOWED_HOSTS` e origens CSRF explícitas. Use Gunicorn atrás de proxy HTTPS e sirva `collectstatic` pelo proxy; cookies seguros e redirecionamento HTTPS são padrão fora de DEBUG. Não exponha `runserver` nem ative DEBUG publicamente. `scripts/dev.py` é apenas para desenvolvimento e apresentação.
 
-## Segurança e limites de operação
+`Dockerfile`, `compose.yaml` e `.env.example` preparam os serviços web/worker/PostgreSQL; precisam de segredos e proxy TLS antes de implantação. O Compose não cria senhas ou habilita SMTP automaticamente. `python manage.py migrate`, `collectstatic --noinput` e provisão do Criador são etapas explícitas da implantação. Build com proxy da nuvem deve montar a CA confiável via `docker build --secret id=proxy_ca,src=/etc/ssl/certs/ca-certificates.crt .`; verifique o bundle configurado no ambiente. Não desative TLS.
 
-As senhas usam PBKDF2-SHA256 com salt aleatório e 260.000 iterações. A API exige sessão e protege alterações com token CSRF. Consultas SQL são parametrizadas; preços são armazenados em centavos inteiros. O CSV neutraliza fórmulas de planilha.
+No ambiente local, `python scripts/backup_database.py` cria backup integral privado; restauração foi validada em banco separado (ver [evidências](docs/testes/django.md)). Em produção, faça backup integral com `pg_dump -Fc` e cópia segura de arquivos/configuração. A tarefa de backup da interface é exportação consistente dos dados do negócio sem senhas: não substitui backup completo de recuperação de desastre.
 
-O servidor HTTP incluído é destinado a desenvolvimento e demonstração acadêmica local. Para operação pública, são necessários servidor/proxy de produção com HTTPS, controle de acesso, gestão de usuários e política operacional. `ESTOQUEPRO_SECURE_COOKIE=1` habilita o atributo Secure quando servido por HTTPS. Sessões ficam na memória e são invalidadas ao reiniciar. Não exponha credenciais demo à rede.
+## Documentação acadêmica
 
-## Pendências acadêmicas
-
-O **PDF da especificação**, o **template oficial**, os **integrantes e suas responsabilidades** e a **data sorteada da apresentação** não foram fornecidos. A documentação é provisória e a conformidade com o PDF não pode ser declarada. As datas do cronograma vêm exclusivamente do texto enviado. Não houve push, publicação nem submissão acadêmica.
-
-
-## Planos propostos
-
-Dois planos: **Básico**, gratuito somente por um mês (1 conta e 50 produtos), e **Completo**, sem limites comerciais de contas/produtos: R$150 mensal, R$750 por seis meses ou R$1.500 por doze meses. A comparação é acessível antes e depois do login. Recursos existentes e planejados são identificados individualmente.
-
-**Cobrança, limites e expiração ainda não são aplicados.** Condições propostas de cancelamento antecipado: até dois meses no semestral e até três no anual, com possibilidade de desativar renovação e condições contratuais a revisar antes da venda. Veja a [matriz funcional e roteiro de implantação](docs/planos.md).
+Materiais anteriores estão em `docs/`, `backlog/` e `apresentacao/`; os documentos legados descrevem a versão SQLite e devem ser lidos junto ao adendo [MIGRACAO_DJANGO.md](docs/MIGRACAO_DJANGO.md). O PDF e o template oficial ainda não foram fornecidos. A entrega acadêmica final continua provisória e não foi submetida automaticamente.

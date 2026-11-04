@@ -1,3 +1,5 @@
+> **Atualização:** o backend principal agora usa Django/PostgreSQL e a marca continua EstoquePro. Leia o adendo [MIGRACAO_DJANGO.md](MIGRACAO_DJANGO.md) e o [DER atual](diagramas/django-er.mmd). O conteúdo a seguir documenta a primeira versão SQLite e permanece como histórico para adaptação ao template oficial.
+
 # EstoquePro — documento acadêmico provisório
 
 **Disciplina:** Projeto e Engenharia de Software — A3. **Versão:** MVP local de 03/11/2026. **Instituição, professor, turma, integrantes, matrículas e responsabilidades nominais:** não informados. Este documento organiza o conteúdo; precisa ser adaptado ao template oficial e revisado contra o PDF antes da entrega.

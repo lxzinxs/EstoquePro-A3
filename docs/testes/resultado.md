@@ -1,3 +1,5 @@
+> **Versão principal atual:** Django/PostgreSQL. Resultados da migração em [django.md](django.md). Os registros abaixo pertencem à versão anterior SQLite.
+
 # Relatório de validação local — 03/11/2026
 
 Ambiente: Linux, Python 3.12.14, Node 24.22.1 para verificação sintática opcional, Playwright 1.62.0 com Chromium do sistema. Teste de navegador usa locale pt-BR e fuso America/Sao_Paulo. Dados de todos os testes são fictícios; suíte de domínio/API e navegador usa bancos temporários separados.

@@ -1,3 +1,16 @@
+# Diagramas
+
+## Versão atual Django/PostgreSQL
+
+- [DER Mermaid gerado dos modelos](django-er.mmd)
+- [Fonte Graphviz](django-er.dot) e [visual SVG](django-er.svg)
+- Modelos reais: `inventory/models.py`; restrições executadas em `inventory/migrations/`.
+- Arquitetura e fluxos atuais: [adendo da migração](../MIGRACAO_DJANGO.md).
+
+## Diagramas históricos SQLite
+
+Os diagramas anteriores abaixo descrevem a primeira versão e não devem ser usados como modelo completo da versão Django.
+
 # Diagramas do MVP
 
 | Diagrama | Fonte | Visual estático |

@@ -65,11 +65,13 @@ Categoria 1:N Produto; Fornecedor opcional 1:N Produto; Produto 1:N Movimentaç�
 
 # Tecnologias e arquitetura
 
-Navegador (HTML/CSS/JS) → HTTP Python → Inventory → SQLite.
+Navegador (HTML/CSS/JS) → Django → Serviços transacionais → PostgreSQL.
 
-Sem dependências externas obrigatórias. Testes com unittest e, opcionalmente, Playwright.
+Worker separado gera relatórios, cópias de dados e resumos. A versão SQLite anterior é preservada para migração.
 
-SQLite usa chaves estrangeiras e transação imediata na movimentação.
+Dependências fixadas em requirements.txt. Testes Django executados em PostgreSQL real e interface com Playwright.
+
+PostgreSQL usa chaves estrangeiras, transações e bloqueios de linha na movimentação.
 
 ---
 
@@ -92,7 +94,7 @@ SQLite usa chaves estrangeiras e transação imediata na movimentação.
 
 # Testes e qualidade
 
-25 testes automatizados de domínio/API aprovados nesta validação.
+Resultados da versão Django estão em docs/testes/django.md; os testes antigos de domínio/API pertencem à versão SQLite.
 
 Fluxo Playwright aprovado em Chromium: cadastros, edição, busca, movimentações válidas e inválidas, arquivamento, CSV, sessão e logout.
 
