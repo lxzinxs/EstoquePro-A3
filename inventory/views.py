@@ -42,6 +42,25 @@ COLLECTIONS={
 }
 PREMIUM=set(COLLECTIONS)-{'products','categories','movements','lots','jobs'}
 
+def navigation(a, current_path):
+    premium=a.organization.plan=='complete' or is_creator(a.user)
+    rank={'member':0,'admin':1,'master':2,'creator':3}[a.role]
+    groups=[
+      ('Estoque','▣', [('Produtos','listing','products',0,False),('Categorias','listing','categories',0,False),('Fornecedores','listing','suppliers',0,True),('Lotes e validade','listing','lots',0,False),('Histórico','listing','movements',0,False)]),
+      ('Compras','▤',[('Pedidos de compra','listing','orders',0,True),('Cotações e preços','listing','quotes',1,True),('Importar NF-e','nfe',None,1,True)]),
+      ('Financeiro e análises','↗',[('Contas a pagar e receber','listing','ledger',1,True),('Análises e Curva ABC','analysis',None,0,True)]),
+      ('Operações','⇄',[('Transferências','listing','transfers',0,True),('Nova transferência','transfer',None,0,True),('Movimentação em lote','batch',None,0,True),('Inventário cego','listing','counts',0,True),('Etiquetas','labels',None,0,True),('Exportar CSV','report','csv',0,False)]),
+      ('Configurações','⚙',[('Filiais','listing','companies',0,True),('Locais e atendimento','listing','locations',0,True),('Equipe e permissões','listing','members',2,True),('Novo negócio','new-business',None,2,True),('Marca nos relatórios','branding',None,2,True),('Auditoria','listing','audit',1,True),('Tarefas e arquivos','listing','jobs',0,False),('Agendamentos','listing','schedules',1,True),('Planos','plans',None,0,False),('Assinatura','subscription',None,2,False),('Alterar senha','password_change',None,0,False)])]
+    result=[]
+    for label,icon,items in groups:
+        links=[]
+        for title,route,arg,level,paid in items:
+            if rank<level or (paid and not premium):continue
+            url=reverse(route,args=[arg] if arg else [])
+            links.append({'label':title,'url':url,'active':current_path==url})
+        if links:result.append({'label':label,'icon':icon,'links':links,'open':any(link['active'] for link in links) or (current_path=='/' and label=='Estoque')})
+    return result
+
 def tenant(view):
     @login_required
     @wraps(view)
@@ -54,7 +73,7 @@ def tenant(view):
         org_id=request.session.get('organization_id')
         member=next((m for m in memberships if m.organization_id==org_id),memberships[0])
         request.a=access_for(request.user,member.organization_id)
-        request.tenant_context={'org':request.a.organization,'role':request.a.role,'memberships':memberships,'nav':[(k,v[1]) for k,v in COLLECTIONS.items() if k!='lines' and (is_creator(request.user) or request.a.organization.plan=='complete' or k not in PREMIUM)]}
+        request.tenant_context={'org':request.a.organization,'role':request.a.role,'creator_access':is_creator(request.user),'memberships':memberships,'nav_groups':navigation(request.a,request.path),'nav':[(k,v[1]) for k,v in COLLECTIONS.items() if k!='lines' and (is_creator(request.user) or request.a.organization.plan=='complete' or k not in PREMIUM)]}
         return view(request,*args,**kwargs)
     return wrapped
 
@@ -101,16 +120,18 @@ def listing(request,kind):
     rows=[]
     for item in pagination:
         actions=[]
-        if kind=='products':actions=[('Editar',reverse('edit-product',args=[item.pk])),('Arquivar',reverse('action',args=['archive',item.pk])),('Histórico',reverse('listing',args=['movements'])+'?'+urlencode({'product':item.pk}))]
+        if kind=='products':actions=[('Registrar entrada',reverse('movement')+'?'+urlencode({'product':item.pk})),('Editar',reverse('edit-product',args=[item.pk])),('Arquivar',reverse('action',args=['archive',item.pk])),('Histórico',reverse('listing',args=['movements'])+'?'+urlencode({'product':item.pk}))]
         if kind=='orders':actions=[('Receber',reverse('action',args=['receive',item.pk])),('Compartilhar',reverse('order-share',args=[item.pk]))]
         if kind=='transfers' and item.status=='pending':actions=[('Confirmar',reverse('action',args=['confirm',item.pk]))]
         if kind=='ledger':actions=[('Baixar',reverse('payment',args=[item.pk]))]
         if kind=='counts' and item.status=='pending':actions=[('Fechar contagem',reverse('action',args=['count',item.pk]))]
         if kind=='jobs' and item.status=='done' and item.result_file:actions=[('Baixar',reverse('job-file',args=[item.pk]))]
         if kind=='members':actions=[('Permissões',reverse('membership-edit',args=[item.pk]))]
-        rows.append({'cells':[getattr(item,f) for f in fields],'actions':actions})
+        cells=[getattr(item,'get_'+f+'_display')() if callable(getattr(item,'get_'+f+'_display',None)) else getattr(item,f) for f in fields]
+        if kind=='products':cells.append(quantity(item))
+        rows.append({'cells':cells,'actions':actions})
     create=reverse('new-record',args=[kind]) if COLLECTIONS[kind][3] else reverse('add-member') if kind=='members' else None
-    return page(request,'inventory/list.html',{'title':title,'headers':fields,'rows':rows,'pagination':pagination,'total':total,'create':create,'kind':kind})
+    return page(request,'inventory/list.html',{'title':title,'headers':[{'sku':'Código','name':'Nome','price':'Preço (R$)','minimum':'Mínimo','supplier':'Fornecedor','location':'Local','product':'Produto','quantity':'Quantidade','kind':'Tipo','unit_cost':'Custo unitário','note':'Motivo','actor':'Usuário','created_at':'Data','status':'Situação','amount':'Valor','due_date':'Vencimento','company':'Filial','code':'Lote','expiry':'Validade','user':'Usuário','role':'Perfil'}.get(f,f.replace('_',' ').capitalize()) for f in fields]+(['Saldo'] if kind=='products' else []),'rows':rows,'pagination':pagination,'total':total,'create':create,'kind':kind})
 
 @tenant
 def new_record(request,kind,pk=None):
@@ -141,11 +162,14 @@ def new_record(request,kind,pk=None):
                     item.full_clean();item.save();audit(request.a,kind+'.created',id=item.pk)
             messages.success(request,'Registro salvo.');return redirect('listing',kind=kind)
         except (ValidationError,IntegrityError) as e:errors(form,e)
-    return page(request,'inventory/form.html',{'form':form,'title':title})
+    return page(request,'inventory/form.html',{'form':form,'title':title,'product_form':kind=='products','is_edit':bool(pk)})
 
 @tenant
 def movement(request):
     form=MoveForm(request.POST or None,organization=request.a.organization)
+    selected=request.GET.get('product','')
+    if request.method=='GET' and selected.isdigit() and len(selected)<19 and Product.objects.filter(pk=selected,organization=request.a.organization,active=True).exists():
+        form.initial['product']=selected
     if request.method=='POST' and form.is_valid():
         d=form.cleaned_data
         try:
@@ -310,15 +334,17 @@ def branding(request):
             except (OSError,ValueError):form.add_error('logo','Use PNG/JPEG de até 2000 x 2000 pixels.')
     return page(request,'inventory/form.html',{'form':form,'title':'Marca nos relatórios'})
 
-@login_required
+@tenant
 def plans(request):
     from src.estoquepro.plans import PLANS
-    return render(request,'inventory/plans.html',{'plans':PLANS})
+    return page(request,'inventory/plans.html',{'plans':PLANS})
 
 @tenant
 def subscription(request):
     permit(request.a,'master',write=False)
     org=request.a.organization.billing_parent or request.a.organization
+    if is_creator(request.user):
+        return page(request,'inventory/subscription.html',{'billing':org})
     if org.pk!=request.a.organization.pk and not is_creator(request.user):access_for(request.user,org.pk)
     if request.method=='POST':
         org.renewal_enabled=False;org.save(update_fields=['renewal_enabled'])

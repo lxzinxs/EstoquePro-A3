@@ -269,6 +269,38 @@ class CoreTests(TransactionTestCase):
         self.assertTrue(self.client.get('/labels/').content.startswith(b'%PDF'))
         self.assertEqual(self.client.get('/report/pdf/?start=invalid').status_code,400)
 
+    def test_product_without_prerequisites_and_inline_registration(self):
+        org=Organization.objects.create(name='Novo',trial_ends_at=month_after(timezone.now()))
+        Membership.objects.create(organization=org,user=self.user,role='master')
+        access=access_for(self.user,org.pk)
+        p=save_product(access,dict(sku='SIMPLES',name='Sem pré-cadastros',price=0,minimum=0))
+        self.assertEqual(p.category.name,'Geral');self.assertIsNone(p.supplier)
+        another=save_product(access,dict(sku='OUTRO',name='Outro',price=0,minimum=0))
+        self.assertEqual(p.category,another.category)
+        p=save_product(self.a,dict(sku='INLINE',name='Inline',price=0,minimum=0,new_category='Categoria inline',new_supplier='Fornecedor inline'))
+        self.assertEqual(p.category.name,'Categoria inline');self.assertEqual(p.supplier.name,'Fornecedor inline')
+        session=self.client.session;session['organization_id']=org.pk;session.save()
+        response=self.client.post('/new/products/',{'sku':'WEBMIN','name':'Produto simples','price':'0','minimum':'0','lead_days':'7'})
+        self.assertEqual(response.status_code,302)
+        self.assertTrue(Product.objects.filter(organization=org,sku='WEBMIN',category__name='Geral').exists())
+
+    def test_plans_preserve_context_and_creator_entitlement(self):
+        owner=get_user_model().objects.create_user('owner',password='SyntheticOwner!123',is_staff=True,is_superuser=True)
+        Creator.objects.create(user=owner);self.client.force_login(owner)
+        self.org.plan='basic';self.org.save()
+        response=self.client.get('/plans/')
+        self.assertContains(response,'Criador · Completo')
+        self.assertContains(response,'Completo ativo · Criador')
+        self.assertNotContains(response,'Período encerrado')
+        response=self.client.get('/subscription/')
+        self.assertContains(response,'Completo — acesso permanente do Criador')
+        self.assertNotContains(response,'Não contratado')
+        self.assertNotContains(response,'Básico até:')
+        self.assertNotContains(response,'Desativar renovação')
+        self.assertContains(self.client.get('/'),'Configurações')
+        self.client.force_login(self.user)
+        self.assertNotContains(self.client.get('/plans/'),'Completo ativo · Criador')
+
     def test_views_render_forms_and_lists(self):
         for kind in COLLECTION_KEYS:
             with self.subTest(kind=kind):self.assertEqual(self.client.get('/list/'+kind+'/').status_code,200)

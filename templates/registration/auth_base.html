@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="login-screen access-screen">
+  <div class="login-intro access-intro">
+    <a class="brand" href="{% url 'login' %}" aria-label="EstoquePro — início"><span class="brand-mark" aria-hidden="true">▣</span><span>Estoque<strong>Pro</strong></span></a>
+    <div class="access-story"><p class="eyebrow">CONTROLE QUE GERA CONFIANÇA</p><h1>Seu estoque.<br>Uma visão completa.</h1><p class="access-description">Organize produtos, acompanhe movimentações e saiba quando repor. Tudo em um só lugar.</p>
+      <div class="access-illustration" aria-hidden="true"><div class="package-symbol"><svg viewBox="0 0 120 120" fill="none"><path d="M60 12 105 36 60 61 15 36 60 12Z"/><path d="M15 36v49l45 25 45-25V36M60 61v49M37 24l45 25v23"/></svg></div><div class="access-bars"><i></i><i></i><i></i><i></i></div><div class="access-art-label"><span>✓</span> Estoque sob controle</div></div>
+      <div class="access-benefits"><span>✓ Dados organizados</span><span>✓ Decisões mais claras</span></div>
+    </div><small class="access-signature">Projeto acadêmico A3 · Engenharia de Software</small>
+  </div>
+  <div class="login-panel access-panel"><div class="access-card">
+    <nav class="access-switch" aria-label="Acesso ao sistema"><a href="{% url 'login' %}" {% block login_active %}{% endblock %}>Entrar</a><a href="{% url 'signup' %}" {% block signup_active %}{% endblock %}>Cadastro</a></nav>
+    {% block auth_content %}{% endblock %}
+    <p class="access-foot"><span aria-hidden="true">◈</span> Seu negócio, organizado em um só lugar.</p>
+  </div></div>
+</section>
+{% endblock %}

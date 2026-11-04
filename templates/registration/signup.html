@@ -1,1 +1,13 @@
-{% extends 'base.html' %}{% block content %}<div class="auth-page"><div class="panel panel-body"><h1>Cadastro EstoquePro</h1><p>Cada cadastro cria um negócio separado, com um mês de acesso básico.</p><form method="post">{% csrf_token %}{{form.as_p}}<button class="primary">Criar negócio e entrar</button></form><a href="{% url 'login' %}">Já tenho conta</a></div></div>{% endblock %}
+{% extends 'registration/auth_base.html' %}
+{% block signup_active %}aria-current="page"{% endblock %}
+{% block auth_content %}
+<p class="eyebrow">SEU PRIMEIRO PASSO</p><h2>Comece a organizar seu estoque</h2><p class="muted access-subtitle">Crie sua conta e experimente o plano Básico por um mês.</p>
+<form method="post" class="access-form access-signup">
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="access-errors" role="alert">{{form.non_field_errors}}</div>{% endif %}
+  {% for field in form %}<div class="access-field"><label for="{{field.id_for_label}}">{{field.label}}</label>{{field}}{% if field.help_text %}<div class="access-help" id="{{field.auto_id}}_helptext">{{field.help_text|safe}}</div>{% endif %}{% if field.errors %}<div class="access-errors" role="alert">{{field.errors}}</div>{% endif %}</div>{% endfor %}
+  <button class="primary access-submit" type="submit">Criar conta e entrar <span aria-hidden="true">→</span></button>
+</form>
+<p class="access-privacy">Seu cadastro cria um negócio separado. Os dados de outras empresas não ficam disponíveis para sua conta.</p>
+<div class="access-alternative"><span>Já tem uma conta?</span><a class="secondary" href="{% url 'login' %}">Entrar na minha conta</a></div>
+{% endblock %}

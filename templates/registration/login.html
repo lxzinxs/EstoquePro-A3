@@ -1,1 +1,14 @@
-{% extends 'base.html' %}{% block content %}<section class="login-screen"><div class="login-intro"><div class="brand">▣ Estoque<strong>Pro</strong></div><p class="eyebrow">CONTROLE QUE GERA CONFIANÇA</p><h1>Seu estoque.<br>Uma visão completa.</h1><p>Gerencie estoque, compras e finanças com os dados de cada negócio separados.</p></div><div class="login-panel"><form method="post">{% csrf_token %}<h2>Acesse seu painel</h2>{{form.as_p}}{% if next %}<input type="hidden" name="next" value="{{next}}">{% endif %}<button class="primary" type="submit">Entrar</button><p><a href="{% url 'signup' %}">Cadastro · Criar um negócio</a></p><p><a href="{% url 'password_reset' %}">Esqueci minha senha</a></p></form></div></section>{% endblock %}
+{% extends 'registration/auth_base.html' %}
+{% block login_active %}aria-current="page"{% endblock %}
+{% block auth_content %}
+<p class="eyebrow">BEM-VINDO DE VOLTA</p><h2>Acesse seu painel</h2><p class="muted access-subtitle">Entre e continue de onde parou.</p>
+<form method="post" class="access-form">
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="access-errors" role="alert">{{form.non_field_errors}}</div>{% endif %}
+  {% for field in form %}<div class="access-field"><label for="{{field.id_for_label}}">{{field.label}}</label>{{field}}{% if field.errors %}<div class="access-errors" role="alert">{{field.errors}}</div>{% endif %}</div>{% endfor %}
+  {% if next %}<input type="hidden" name="next" value="{{next}}">{% endif %}
+  <div class="access-recovery"><a href="{% url 'password_reset' %}">Esqueci minha senha</a></div>
+  <button class="primary access-submit" type="submit">Entrar no sistema <span aria-hidden="true">→</span></button>
+</form>
+<div class="access-alternative"><span>Ainda não tem conta?</span><a href="{% url 'signup' %}" class="secondary">Criar minha conta</a></div>
+{% endblock %}

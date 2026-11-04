@@ -1,0 +1,10 @@
+<aside class="sidebar workspace-sidebar" id="workspace-sidebar">
+  <div class="workspace-brand"><a class="brand" href="{% url 'dashboard' %}"><span class="brand-mark" aria-hidden="true">▣</span><span>Estoque<strong>Pro</strong></span></a><button type="button" id="menu-close" class="menu-close" aria-label="Fechar menu">×</button></div>
+  <nav class="workspace-nav" aria-label="Menu principal">
+    <a class="nav-overview {% if request.path == '/' %}is-current{% endif %}" href="{% url 'dashboard' %}" {% if request.path == '/' %}aria-current="page"{% endif %}><span aria-hidden="true">◫</span>Visão geral</a>
+    <a class="nav-overview {% if request.path == '/move/' %}is-current{% endif %}" href="{% url 'movement' %}" {% if request.path == '/move/' %}aria-current="page"{% endif %}><span aria-hidden="true">＋</span>Entrada / saída</a>
+    <p class="workspace-nav-caption">ESPAÇO DE TRABALHO</p>
+    {% for group in nav_groups %}<details class="nav-group" {% if group.open %}open{% endif %}><summary><span aria-hidden="true">{{group.icon}}</span>{{group.label}}<span class="nav-chevron" aria-hidden="true">⌄</span></summary><div class="nav-group-links">{% for link in group.links %}<a href="{{link.url}}" {% if link.active %}class="is-current" aria-current="page"{% endif %}>{{link.label}}</a>{% endfor %}</div></details>{% endfor %}
+    {% if role == 'creator' %}<a class="creator-link" href="/admin/"><span aria-hidden="true">◇</span> Administração do Criador <span aria-hidden="true">↗</span></a>{% endif %}
+  </nav><div class="workspace-sidebar-foot"><span class="workspace-status" aria-hidden="true"></span>EstoquePro <span>Seu estoque sob controle</span></div>
+</aside>

@@ -91,8 +91,16 @@ def save_product(a, data, pk=None):
     permit(a,'admin')
     if not is_creator(a.user) and not pk and org.plan=='basic' and Product.objects.filter(organization=org,active=True).count()>=50:
         raise ValidationError('O Básico permite até 50 produtos ativos.')
-    category=scoped(Category,a,data['category'])
-    supplier=scoped(Supplier,a,data['supplier']) if data.get('supplier') else None
+    category_name=str(data.get('new_category') or '').strip()
+    supplier_name=str(data.get('new_supplier') or '').strip()
+    if len(category_name)>80 or len(supplier_name)>100:raise ValidationError('Nome de categoria ou fornecedor muito longo.')
+    if category_name:
+        category=Category.objects.filter(organization=org,name__iexact=category_name).first() or Category.objects.create(organization=org,name=category_name)
+    elif data.get('category'):category=scoped(Category,a,data['category'])
+    else:category=Category.objects.filter(organization=org,name__iexact='Geral').first() or Category.objects.create(organization=org,name='Geral')
+    if supplier_name:
+        supplier=Supplier.objects.filter(organization=org,name__iexact=supplier_name).first() or Supplier.objects.create(organization=org,name=supplier_name)
+    else:supplier=scoped(Supplier,a,data['supplier']) if data.get('supplier') else None
     product=scoped(Product,a,pk) if pk else Product(organization=org)
     product.sku=str(data['sku']).strip().upper(); product.name=data['name'].strip()
     product.category=category; product.supplier=supplier
