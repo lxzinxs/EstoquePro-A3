@@ -136,3 +136,18 @@ sem mostrar senhas. `pg_isready` indica disponibilidade, mas não valida a senha
 Um volume PostgreSQL existente conserva as credenciais originais mesmo se o
 arquivo de configuração for recriado. Não apague `data/` nem o volume para corrigir
 uma falha de conexão; não publique arquivos `.env`.
+
+Se `doctor` confirmar **autenticação recusada** no container local dedicado, use:
+
+```sh
+python scripts/dev.py repair-db-password
+python scripts/dev.py setup
+```
+
+Esse comando explícito sincroniza a senha do usuário PostgreSQL existente com
+`data/django-local.env`, pela conexão interna do container. Preserva tabelas,
+volumes e usuários do EstoquePro (inclusive suas senhas de login). Restringe a
+recuperação ao container `nerythstock-postgres` publicado em `127.0.0.1:55432`;
+não serve para bancos remotos. Outros clientes que usem esse mesmo usuário do
+banco precisarão da senha atualizada. O comando não mostra a senha e verifica
+a autenticação ao terminar. Não recria banco nem usuário ausente.

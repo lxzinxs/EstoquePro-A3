@@ -32,6 +32,19 @@ env["DJANGO_SETTINGS_MODULE"] = "config.settings"
 python = ROOT / (".venv/Scripts/python.exe" if os.name == "nt" else ".venv/bin/python")
 if not python.exists():
     sys.exit("Crie .venv e instale requirements.txt primeiro.")
+if len(sys.argv) > 1 and sys.argv[1] == "repair-db-password":
+    from repair_database import repair_password
+
+    try:
+        docker, docker_env = docker_runtime()
+        repair_password(values, docker, docker_env)
+    except (DockerUnavailable, ValueError, OSError, subprocess.TimeoutExpired) as exc:
+        if isinstance(exc, (OSError, subprocess.TimeoutExpired)):
+            sys.exit("Falha ao executar a recuperação local. Nenhum dado foi apagado.")
+        sys.exit(str(exc))
+    print("Senha do usuário PostgreSQL sincronizada com data/django-local.env.")
+    sys.argv[1:] = ["doctor"]
+
 if len(sys.argv) > 1 and sys.argv[1] == "setup":
     try:
         docker, docker_env = docker_runtime()
