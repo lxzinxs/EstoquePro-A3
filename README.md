@@ -106,4 +106,4 @@ O **PDF da especificação**, o **template oficial**, os **integrantes e suas re
 
 ## Planos propostos
 
-A tela **Planos e recursos**, também acessível antes do login, apresenta Grátis (R$ 0, 1 conta/50 produtos), Business (R$ 29,90, 2/100), Plus (R$ 59,90, 5/300) e Pro (R$ 99,90, contas e produtos ilimitados). A comparação tem visual próprio e separa recursos atuais de planejados. **Não há cobrança, quotas aplicadas ou ativação dos módulos avançados nesta revisão.** Veja a [matriz funcional e roteiro de implantação](docs/planos.md).
+A tela **Planos e recursos**, também acessível antes do login, apresenta Grátis (R$ 0, 1 conta/50 produtos), Business (R$ 49,90, 2/100), Plus (R$ 99,90, 5/300) e Pro (R$ 199,90, contas e produtos ilimitados). A comparação tem visual próprio e separa recursos atuais de planejados. **Não há cobrança, quotas aplicadas ou ativação dos módulos avançados nesta revisão.** Veja a [matriz funcional e roteiro de implantação](docs/planos.md).

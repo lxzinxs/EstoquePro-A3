@@ -285,7 +285,7 @@ class HttpTests(unittest.TestCase):
         self.assertFalse(catalog['billing_enabled'])
         plans = catalog['plans']
         self.assertEqual([p['id'] for p in plans], ['gratis', 'business', 'plus', 'pro'])
-        self.assertEqual([p['price_cents'] for p in plans], [0, 2990, 5990, 9990])
+        self.assertEqual([p['price_cents'] for p in plans], [0, 4990, 9990, 19990])
         self.assertEqual([(p['accounts'], p['products']) for p in plans], [(1, 50), (2, 100), (5, 300), (None, None)])
         for index, plan in enumerate(plans):
             self.assertEqual(plan['inherits'], plans[index-1]['id'] if index else None)

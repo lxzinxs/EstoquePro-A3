@@ -5,9 +5,9 @@ Preços iniciais propostos em 04/11/2026. Não há assinatura, cobrança, contra
 | Plano | Mensalidade proposta | Contas | Produtos |
 |---|---:|---:|---:|
 | Grátis | R$ 0 | 1 | 50 |
-| Business | R$ 29,90 | 2 | 100 |
-| Plus | R$ 59,90 | 5 | 300 |
-| Pro | R$ 99,90 | Ilimitadas | Ilimitados |
+| Business | R$ 49,90 | 2 | 100 |
+| Plus | R$ 99,90 | 5 | 300 |
+| Pro | R$ 199,90 | Ilimitadas | Ilimitados |
 
 Hierarquia cumulativa: Grátis → Business → Plus → Pro. As repetições e prefixos `svg` do texto recebido foram removidos. Contas significam usuários ativos por organização; produtos significam itens ativos somados entre as empresas da organização. Essa definição é proposta e ainda não é aplicada no banco. “Ilimitados” significa ausência de quota comercial, sem promessa de capacidade física infinita.
 

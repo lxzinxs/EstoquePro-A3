@@ -30,7 +30,7 @@ def run():
                 plans = page.locator('#plans-dialog')
                 expect(plans.locator('.plan-card')).to_have_count(4)
                 expect(plans.locator('.plan-pro .plan-limits')).to_have_text('Contas e produtos ilimitados')
-                expect(plans.locator('.plan-business .plan-price')).to_contain_text('29,90')
+                expect(plans.locator('.plan-business .plan-price')).to_contain_text('49,90')
                 page.screenshot(path=str(ROOT / 'docs/prototipos/planos-desktop.png'), full_page=True)
                 page.set_viewport_size({'width': 390, 'height': 844})
                 assert plans.evaluate('(el) => el.scrollWidth <= el.clientWidth'), 'Overflow no catálogo móvel'
