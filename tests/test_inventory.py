@@ -284,9 +284,11 @@ class HttpTests(unittest.TestCase):
         self.assertFalse(catalog['limits_enforced'])
         self.assertFalse(catalog['billing_enabled'])
         plans = catalog['plans']
-        self.assertEqual([p['id'] for p in plans], ['gratis', 'business', 'plus', 'pro'])
-        self.assertEqual([p['price_cents'] for p in plans], [0, 4990, 9990, 19990])
-        self.assertEqual([(p['accounts'], p['products']) for p in plans], [(1, 50), (2, 100), (5, 300), (None, None)])
+        self.assertEqual([p['id'] for p in plans], ['basico', 'completo'])
+        self.assertEqual([p['price_cents'] for p in plans], [0, 15000])
+        self.assertEqual([(p['accounts'], p['products']) for p in plans], [(1, 50), (None, None)])
+        self.assertEqual(plans[0]['trial_months'], 1)
+        self.assertEqual([(o['months'], o['total_cents'], o['early_cancellation_months']) for o in plans[1]['billing_options']], [(1,15000,None),(6,75000,2),(12,150000,3)])
         for index, plan in enumerate(plans):
             self.assertEqual(plan['inherits'], plans[index-1]['id'] if index else None)
             self.assertEqual(len({f['name'] for f in plan['features']}), len(plan['features']))

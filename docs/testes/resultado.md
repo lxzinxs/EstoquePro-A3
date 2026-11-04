@@ -89,3 +89,8 @@ A aba Cadastro cria usuários do mesmo negócio, com as mesmas permissões; não
 - `CHROMIUM_PATH=/usr/bin/chromium python tests/browser_smoke.py`: comparação abriu antes do login, exibiu quatro cartões, preço Business e Pro ilimitado; sem overflow interno a 390 px; fluxo existente completo aprovado, sem exceções JavaScript.
 - `node --check src/estoquepro/static/plans.js` e compilação Python aprovados. Capturas em `docs/prototipos/planos-desktop.png` e `planos-mobile.png`.
 - Estes testes validam o catálogo, não a execução dos recursos planejados. Quotas, cobrança e módulos comerciais ainda não foram implementados; situação por recurso em `docs/planos.md`.
+
+
+## Dois planos e modalidades de pagamento — 04/11/2026
+
+26 testes aprovados (5,337 s), sem falhas ou ignorados. Catálogo validado com Básico gratuito por um mês e Completo por R$150 mensal, R$750 semestral e R$1.500 anual; metadados de prazos de cancelamento antecipado de 2/3 meses. Teste Chromium aprovado em desktop/mobile, com exatamente dois cartões e três modalidades, sem exceções JavaScript. Capturas dos planos regeneradas. Estes testes não validam cobrança, expiração ou bloqueio de cancelamento: continuam não implementados.

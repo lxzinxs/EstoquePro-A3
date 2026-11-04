@@ -1,90 +1,72 @@
-# Planos e evolução funcional
+# Dois planos — proposta atual
 
-Preços iniciais propostos em 04/11/2026. Não há assinatura, cobrança, contratação de serviço ou mudança automática de permissões. Valores sujeitos à revisão de custos de hospedagem, armazenamento, impostos e capacidade de atendimento antes da comercialização. O suporte descrito é uma proposta comercial: não há equipe, e-mail ou WhatsApp de suporte configurados.
+Substitui os quatro planos anteriores. O catálogo é funcional; contratação, cobrança, expiração e restrições ainda não estão ativas. Recursos marcados como planejados continuam pendentes.
 
-| Plano | Mensalidade proposta | Contas | Produtos |
-|---|---:|---:|---:|
-| Grátis | R$ 0 | 1 | 50 |
-| Business | R$ 49,90 | 2 | 100 |
-| Plus | R$ 99,90 | 5 | 300 |
-| Pro | R$ 199,90 | Ilimitadas | Ilimitados |
+| Plano | Preço total | Duração | Contas / produtos |
+|---|---:|---|---|
+| Básico | R$ 0 | Somente 1 mês | 1 / 50 |
+| Completo mensal | R$ 150 | 1 mês | Ilimitados |
+| Completo semestral | R$ 750 | 6 meses | Ilimitados |
+| Completo anual | R$ 1.500 | 12 meses | Ilimitados |
 
-Hierarquia cumulativa: Grátis → Business → Plus → Pro. As repetições e prefixos `svg` do texto recebido foram removidos. Contas significam usuários ativos por organização; produtos significam itens ativos somados entre as empresas da organização. Essa definição é proposta e ainda não é aplicada no banco. “Ilimitados” significa ausência de quota comercial, sem promessa de capacidade física infinita.
+São **dois planos**, sendo três modalidades de pagamento do mesmo Completo. Semestral e anual equivalem a R$125/mês, com pagamento total do período; economia de R$150/semestre e R$300/ano em relação ao mensal. Não é parcelamento nem cobrança já habilitada.
 
-## Entregue nesta revisão
+## Condições de cancelamento propostas
 
-Página de comparação com identidade própria, acessível antes de entrar e dentro do aplicativo. Fonte única de dados em `src/estoquepro/plans.py`, exposta por GET `/api/plans`. A página identifica recursos existentes e planejados; limites propostos e cobrança desativada são explícitos. Nada foi bloqueado retroativamente: fornecedores continuam acessíveis e os usuários existentes continuam no mesmo estoque compartilhado.
+Pedido recebido: semestral sem cancelamento após dois meses de uso e anual após três meses. A tela apresenta esses prazos como condições propostas de encerramento antecipado do período contratado, mantendo a possibilidade de desativar a renovação. Política de reembolso, proporcionalidade, direito de arrependimento e demais obrigações legais precisam de definição contratual e revisão antes da venda. Não existe bloqueio de cancelamento ou cobrança no sistema atual. Não foram inventados termos definitivos de reembolso para mensal, semestral ou anual.
 
-**Esta revisão não implementa os módulos avançados abaixo nem transforma a aplicação local em um SaaS multiempresa.** A página não tem botão de contratar que simule um upgrade inexistente.
+O período gratuito será de um mês de calendário; não deve renovar gratuitamente nem gerar cobrança automática. Nesta revisão, essa duração é declarada no catálogo, mas **não há expiração aplicada às contas atuais**.
 
-## Matriz funcional solicitada
+## Recursos
 
-### Grátis
+### Básico
 
-| Grupo | Funcionalidade | Situação |
-|---|---|---|
-| Estoque | Cadastro de itens | Disponível no app atual (sem restrição por plano) |
-| Estoque | Entradas e saídas | Disponível no app atual (sem restrição por plano) |
-| Estoque | Alertas de estoque baixo | Disponível no app atual (sem restrição por plano) |
-| Relatórios | Relatório básico CSV | Disponível no app atual (sem restrição por plano) |
-| Acesso | Acesso multidispositivo | Pendente de implementação/configuração |
-| Integrações | Backup na conta Google do usuário | Pendente de implementação/configuração |
-| Atendimento | Suporte por e-mail | Pendente de implementação/configuração |
+- Cadastro de itens — disponível no aplicativo atual.
+- Entradas e saídas — disponível no aplicativo atual.
+- Alertas de estoque baixo — disponível no aplicativo atual.
+- Relatório básico CSV — disponível no aplicativo atual.
+- Acesso multidispositivo — planejado.
+- Backup na conta Google do usuário — planejado.
+- Suporte por e-mail — planejado.
 
-### Business
+### Completo
 
-Inclui o plano anterior.
+Inclui tudo do Básico, mais:
 
-| Grupo | Funcionalidade | Situação |
-|---|---|---|
-| Gestão | Análise financeira com filtro por período | Pendente de implementação/configuração |
-| Gestão | Cadastro de fornecedores | Disponível no app atual (sem restrição por plano) |
-| Compras | Pedidos de compra: Pendente → Recebido | Pendente de implementação/configuração |
-| Estoque | Cobertura de estoque em dias | Pendente de implementação/configuração |
-| Estoque | Movimentação em lote | Pendente de implementação/configuração |
-| Custos | Custo médio ponderado | Pendente de implementação/configuração |
-| Estoque | Histórico completo de cada item | Pendente de implementação/configuração |
-| Relatórios | Exportação Excel e PDF | Pendente de implementação/configuração |
-| Estoque | Validade por lote e saída FEFO | Pendente de implementação/configuração |
-| Atendimento | Suporte prioritário via WhatsApp | Pendente de implementação/configuração |
-
-### Plus
-
-Inclui o plano anterior.
-
-| Grupo | Funcionalidade | Situação |
-|---|---|---|
-| Multiempresa | Empresas com dados isolados | Pendente de implementação/configuração |
-| Multiempresa | Transferências entre filiais com confirmação | Pendente de implementação/configuração |
-| Multiempresa | Múltiplos locais de estoque | Pendente de implementação/configuração |
-| Multiempresa | Múltiplos pontos de atendimento | Pendente de implementação/configuração |
-| Automação sem IA paga | Sugestões de compra por regras locais | Pendente de implementação/configuração |
-| Automação sem IA paga | Importação por XML da NF-e | Pendente de implementação/configuração |
-| Automação sem IA paga | Curva ABC automática | Pendente de implementação/configuração |
-| Automação sem IA paga | Resumo executivo diário | Pendente de implementação/configuração |
-| Equipe e segurança | Admin Master e gestão de usuários | Pendente de implementação/configuração |
-| Equipe e segurança | Permissões Membro, Admin e Master | Pendente de implementação/configuração |
-| Equipe e segurança | Auditoria completa por usuário | Pendente de implementação/configuração |
-| Equipe e segurança | Sincronização em tempo real | Pendente de implementação/configuração |
-| Avançado | Código de barras no cadastro e movimentação | Pendente de implementação/configuração |
-| Avançado | Exportação ABC e sugestões em PDF/Excel | Pendente de implementação/configuração |
-| Avançado | Notificações de transferência em tempo real | Pendente de implementação/configuração |
-| Atendimento | WhatsApp premium e onboarding personalizado gratuito | Pendente de implementação/configuração |
-
-### Pro
-
-Inclui o plano anterior.
-
-| Grupo | Funcionalidade | Situação |
-|---|---|---|
-| Financeiro | Contas a pagar, receber e fluxo de caixa | Pendente de implementação/configuração |
-| Financeiro | NF-e gera conta a pagar automaticamente | Pendente de implementação/configuração |
-| Compras | Pedido em um clique e compartilhamento por WhatsApp | Pendente de implementação/configuração |
-| Compras | Cotação com até 3 fornecedores e histórico de preços | Pendente de implementação/configuração |
-| Estoque | Inventário cíclico com leitor e contagem cega | Pendente de implementação/configuração |
-| Estoque | Impressão de etiquetas de código de barras | Pendente de implementação/configuração |
-| Marca | Logo do negócio em relatórios e PDFs | Pendente de implementação/configuração |
-| Executivo | Resumo mensal em PDF e semanal por WhatsApp | Pendente de implementação/configuração |
+- Análise financeira com filtro por período — planejado.
+- Cadastro de fornecedores — disponível no aplicativo atual.
+- Pedidos de compra: Pendente → Recebido — planejado.
+- Cobertura de estoque em dias — planejado.
+- Movimentação em lote — planejado.
+- Custo médio ponderado — planejado.
+- Histórico completo de cada item — planejado.
+- Exportação Excel e PDF — planejado.
+- Validade por lote e saída FEFO — planejado.
+- Suporte prioritário via WhatsApp — planejado.
+- Empresas com dados isolados — planejado.
+- Transferências entre filiais com confirmação — planejado.
+- Múltiplos locais de estoque — planejado.
+- Múltiplos pontos de atendimento — planejado.
+- Sugestões de compra por regras locais — planejado.
+- Importação por XML da NF-e — planejado.
+- Curva ABC automática — planejado.
+- Resumo executivo diário — planejado.
+- Admin Master e gestão de usuários — planejado.
+- Permissões Membro, Admin e Master — planejado.
+- Auditoria completa por usuário — planejado.
+- Sincronização em tempo real — planejado.
+- Código de barras no cadastro e movimentação — planejado.
+- Exportação ABC e sugestões em PDF/Excel — planejado.
+- Notificações de transferência em tempo real — planejado.
+- WhatsApp premium e onboarding personalizado gratuito — planejado.
+- Contas a pagar, receber e fluxo de caixa — planejado.
+- NF-e gera conta a pagar automaticamente — planejado.
+- Pedido em um clique e compartilhamento por WhatsApp — planejado.
+- Cotação com até 3 fornecedores e histórico de preços — planejado.
+- Inventário cíclico com leitor e contagem cega — planejado.
+- Impressão de etiquetas de código de barras — planejado.
+- Logo do negócio em relatórios e PDFs — planejado.
+- Resumo mensal em PDF e semanal por WhatsApp — planejado.
 
 ## Implementação necessária antes de ativar planos
 
@@ -97,9 +79,4 @@ Inclui o plano anterior.
 
 ## Aceitação para lançamento
 
-- Grátis recusa o 51º produto e o 2º membro; Business recusa o 101º e o 3º; Plus recusa o 301º e o 6º. Pro não tem quota comercial. Tentativas concorrentes não ultrapassam limites.
-- Dados de organizações distintas não aparecem em consultas, transferências, eventos, exports ou backups. Troca de empresa não altera permissões.
-- Recurso pago não executa pela API quando não autorizado, inclusive chamando endpoint diretamente.
-- Recebimentos, transferência, NF-e e jobs são idempotentes. Falha desfaz transações sem perda de saldo.
-- Backup/restauração, permissões e histórico são testados por organização, incluindo migração do banco existente.
-- Publicação comercial só após validar integrações, capacidade operacional e atendimento real; preços não incluem serviços externos já contratados.
+Básico deve expirar após um mês de calendário desde a ativação, mantendo acesso à conta, contratação e exportação dos próprios dados, sem conversão automática em plano pago. Quotas básicas propostas: 1 conta e 50 produtos. Completo não terá quota comercial. Bloqueio de novos cadastros deve ser transacional e preservar dados existentes. As regras de expiração, autorização, cobrança, renovação e cancelamento precisam ser implementadas e testadas no backend antes de lançamento comercial.

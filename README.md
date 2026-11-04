@@ -106,4 +106,6 @@ O **PDF da especificação**, o **template oficial**, os **integrantes e suas re
 
 ## Planos propostos
 
-A tela **Planos e recursos**, também acessível antes do login, apresenta Grátis (R$ 0, 1 conta/50 produtos), Business (R$ 49,90, 2/100), Plus (R$ 99,90, 5/300) e Pro (R$ 199,90, contas e produtos ilimitados). A comparação tem visual próprio e separa recursos atuais de planejados. **Não há cobrança, quotas aplicadas ou ativação dos módulos avançados nesta revisão.** Veja a [matriz funcional e roteiro de implantação](docs/planos.md).
+Dois planos: **Básico**, gratuito somente por um mês (1 conta e 50 produtos), e **Completo**, sem limites comerciais de contas/produtos: R$150 mensal, R$750 por seis meses ou R$1.500 por doze meses. A comparação é acessível antes e depois do login. Recursos existentes e planejados são identificados individualmente.
+
+**Cobrança, limites e expiração ainda não são aplicados.** Condições propostas de cancelamento antecipado: até dois meses no semestral e até três no anual, com possibilidade de desativar renovação e condições contratuais a revisar antes da venda. Veja a [matriz funcional e roteiro de implantação](docs/planos.md).
