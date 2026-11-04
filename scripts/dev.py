@@ -5,6 +5,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from runtime import docker_runtime,DockerUnavailable
 ROOT=Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 folder=ROOT/'data';folder.mkdir(exist_ok=True)
@@ -19,8 +20,8 @@ env['DJANGO_SETTINGS_MODULE']='config.settings'
 python=ROOT/('.venv/Scripts/python.exe' if os.name=='nt' else '.venv/bin/python')
 if not python.exists():sys.exit('Crie .venv e instale requirements.txt primeiro.')
 if len(sys.argv)>1 and sys.argv[1]=='setup':
-    docker_env={k:v for k,v in os.environ.items() if k not in ['DOCKER_HOST','DOCKER_CONTEXT','DOCKER_TLS','DOCKER_TLS_VERIFY','DOCKER_CERT_PATH']}
-    docker=['docker','--host=unix:///var/run/docker.sock'] if os.name!='nt' else ['docker']
+    try:docker,docker_env=docker_runtime()
+    except DockerUnavailable as exc:sys.exit(str(exc))
     pgfile=folder/'postgres-local.env'
     pgfile.write_text('POSTGRES_DB='+values['PGDATABASE']+'\nPOSTGRES_USER='+values['PGUSER']+'\nPOSTGRES_PASSWORD='+values['PGPASSWORD']+'\n');pgfile.chmod(0o600)
     inspect=subprocess.run(docker+['inspect','--format','{{.State.Running}}','nerythstock-postgres'],capture_output=True,env=docker_env,text=True)
@@ -34,4 +35,8 @@ if len(sys.argv)>1 and sys.argv[1]=='setup':
     else:sys.exit('PostgreSQL não ficou pronto; examine docker logs nerythstock-postgres.')
     args=['migrate']
 else:args=sys.argv[1:] or ['runserver','127.0.0.1:8000','--noreload']
+if args[0] in ('provision_creator','runserver','runworker','import_legacy','migrate','test','shell') and '--help' not in args:
+    probe=subprocess.run([str(python),'-c',"import psycopg; c=psycopg.connect(connect_timeout=3); c.close()"],env=env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+    if probe.returncode:
+        sys.exit('PostgreSQL não está acessível. Execute python scripts/dev.py setup e só prossiga após as migrações terminarem. Não apague data/ ou o volume do banco.')
 raise SystemExit(subprocess.call([str(python),'manage.py',*args],env=env))

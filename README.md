@@ -86,3 +86,15 @@ No ambiente local, `python scripts/backup_database.py` cria backup integral priv
 ## Documentação acadêmica
 
 Materiais anteriores estão em `docs/`, `backlog/` e `apresentacao/`; os documentos legados descrevem a versão SQLite e devem ser lidos junto ao adendo [MIGRACAO_DJANGO.md](docs/MIGRACAO_DJANGO.md). O PDF e o template oficial ainda não foram fornecidos. A entrega acadêmica final continua provisória e não foi submetida automaticamente.
+
+### CachyOS / Arch Linux: Docker ausente
+
+Se setup informar que não encontrou `docker`, a instalação Python não precisa ser refeita. No CachyOS:
+
+```sh
+sudo pacman -S docker
+sudo systemctl enable --now docker
+sudo usermod -aG docker "$USER"
+```
+
+Saia da sessão do KDE e entre novamente para aplicar o grupo. Em um terminal novo, confirme `docker info` e só então execute `python scripts/dev.py setup`. Se setup falhar, não prossiga para `provision_creator`: o banco ainda não está pronto. Não execute o projeto inteiro com sudo e não apague `data/` ou volumes.
