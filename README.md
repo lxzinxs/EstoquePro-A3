@@ -1,6 +1,6 @@
 # EstoquePro
 
-Gestão de estoque com **Django, PostgreSQL e interface HTML/CSS/JavaScript**. Nome mantido para a apresentação acadêmica. A versão antiga SQLite foi preservada, mas não é mais o ponto de entrada principal.
+Gestão de estoque com **Django, PostgreSQL e interface HTML/CSS/JavaScript**. Nome mantido para a apresentação acadêmica. O suporte à importação do SQLite está preservado em `legacy/`; o servidor e a interface obsoletos foram removidos.
 
 ## Executar localmente (bash, fish ou PowerShell)
 
@@ -61,7 +61,7 @@ Os detalhes, critérios, limites e pendências estão em [MIGRACAO_DJANGO.md](do
 ## Testes
 
 ```sh
-python scripts/dev.py test inventory.tests --noinput
+python scripts/dev.py test inventory.tests.test_core inventory.tests.test_review --noinput
 ```
 
 Testes usam PostgreSQL de teste separado e verificam isolamento, permissões, Criador exclusivo, concorrência, FEFO, custos, pedidos, financeiro, NF-e, importação legada, filas e exportações. A conta local do PostgreSQL de desenvolvimento permite criar banco de teste; a conta de produção deve ter privilégios reduzidos e uma conta separada para migrações/testes.
@@ -70,10 +70,10 @@ Navegador opcional:
 
 ```sh
 .venv/bin/python -m pip install -r requirements-browser.txt
-python scripts/dev.py test inventory.tests_browser --noinput
+python scripts/dev.py test inventory.tests.test_browser --noinput
 ```
 
-No Windows, use `.venv\Scripts\python.exe` para instalar. Defina `CHROMIUM_PATH` se o Chromium não estiver em `/usr/bin/chromium`, ou adapte o teste para o navegador instalado pelo Playwright. Capturas em `docs/prototipos/django-desktop.png` e `django-mobile.png`.
+No Windows, use `.venv\Scripts\python.exe` para instalar. Defina `CHROMIUM_PATH` se o Chromium não estiver em `/usr/bin/chromium`, ou adapte o teste para o navegador instalado pelo Playwright. Capturas em `data/quality/screenshots/` (não versionadas). Os exemplos de apresentação permanecem em `docs/prototipos/`.
 
 ## Produção e configuração
 
@@ -102,3 +102,23 @@ Saia da sessão do KDE e entre novamente para aplicar o grupo. Em um terminal no
 ### Interface e primeiro produto
 
 A navegação está agrupada e os formulários mostram orientações. Para cadastrar o primeiro produto, informe código e nome, mantendo os valores padrão se necessário: a categoria Geral é automática e fornecedor é opcional. Depois use **Registrar entrada** para informar quantidade e custo de compra. Categorias/fornecedores também podem ser criados no próprio formulário em **Organização e fornecedor**. O Criador vê **Completo — acesso permanente do Criador** em Assinatura e não precisa contratar um plano.
+
+
+## Organização e revisão
+
+A estrutura atual está em [docs/ESTRUTURA.md](docs/ESTRUTURA.md). `inventory/views/` separa os endpoints por área; `inventory/tests/` organiza os testes; `static/` contém os arquivos visuais atuais; `legacy/` mantém apenas compatibilidade de migração. O antigo servidor HTTP e sua interface foram removidos. Não há necessidade de mudar o caminho do banco para atualizar a aplicação.
+
+Depois de atualizar, encerre o servidor/worker antigos, execute **`python scripts/dev.py migrate`** e reinicie-os. A migração 0006 adiciona classificação de movimentações e proteção de execução do worker, sem apagar produtos, usuários ou históricos.
+
+Testes sem Django e de compatibilidade:
+
+```sh
+python -m unittest discover -s tests -v
+python -m unittest discover -s legacy/tests -v
+```
+
+Ferramentas opcionais: instale `requirements-dev.txt` no ambiente virtual. O projeto inclui configuração de Ruff e cobertura em `pyproject.toml`. Resultados gerados ficam em `data/quality/` e não entram no Git. A revisão e seus limites estão em [docs/testes/revisao.md](docs/testes/revisao.md).
+
+Na lista de Produtos, **Registrar entrada** é a ação principal; **Mais** reúne edição, alerta, histórico e arquivamento. Em **Alerta quando**, clique para ajustar o limite: 1 avisa com uma unidade ou menos; 0 avisa somente ao zerar. Essa configuração não adiciona ou remove estoque.
+
+**Adicionar membro** está disponível para Admin e Master (respeitando a quota do plano). Admin cria Membros; apenas Master ou Criador atribui cargos de gestão e altera cargos existentes. O último Master não pode ser removido.

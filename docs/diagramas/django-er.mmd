@@ -88,6 +88,7 @@ erDiagram
     INTEGER quantity
     DECIMALFIELD unit_cost
     TEXT note
+    TEXT purpose
     TEXT allocations
     DATETIMEFIELD created_at
   }
@@ -209,6 +210,7 @@ erDiagram
     INTEGER id PK
     INTEGER organization_id FK
     TEXT kind
+    UUIDFIELD lease
     TEXT status
     TEXT payload
     TEXT result_file

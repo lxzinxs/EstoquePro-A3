@@ -1,6 +1,6 @@
 # EstoquePro — migração Django/PostgreSQL
 
-A marca acadêmica permanece **EstoquePro** por solicitação do usuário. Não houve renomeação do repositório. O servidor Python/SQLite anterior é preservado em `src/estoquepro/server.py` apenas como legado; a nova aplicação é `manage.py` + `config/` + `inventory/`.
+A marca acadêmica permanece **EstoquePro** por solicitação do usuário. Não houve renomeação do repositório. A compatibilidade com o SQLite anterior está em `legacy/`; seu servidor HTTP e interface foram removidos após a migração; a nova aplicação é `manage.py` + `config/` + `inventory/`.
 
 ## Stack e execução
 
@@ -87,3 +87,12 @@ Essas pendências impedem afirmar que todos os recursos comerciais estão conclu
 - Campos e colunas traduzidos, dicas de preenchimento, opções avançadas recolhidas, atalho Registrar entrada com produto pré-selecionado e seleção automática de local somente quando houver um único local.
 - Planos em cartões com períodos mensal/semestral/anual e valores consistentes. A seleção altera apenas a apresentação: não contrata nem cobra.
 - Para o Criador, cabeçalho, Planos e Assinatura exibem acesso Completo permanente, sem cobrança/renovação ou vencimento. Isso deriva do privilégio exclusivo do usuário, não altera o plano de outras contas do negócio nem cria uma assinatura paga fictícia. Os recursos externos ainda pendentes continuam pendentes para todos, inclusive para o Criador.
+
+
+## Revisão posterior de integridade e organização
+
+A estrutura atual está em `docs/ESTRUTURA.md` e a evidência em `docs/testes/revisao.md`. `inventory/tests.py` e `inventory/tests_browser.py` passaram para o pacote `inventory/tests/`. A pasta `src/` antiga foi removida após mover os estáticos atuais para `static/`, o catálogo para `inventory/catalog.py` e o suporte SQLite para `legacy/`.
+
+A migração 0006 cria leases de tarefas e classificação estruturada de movimentações. Transferências/inventários deixam de ser classificados pelo texto editável do motivo. As permissões financeiras, quota concorrente, limite de saldo, recebimento concorrente e acesso à assinatura de origem foram revisados. A consulta de estoque é agregada para evitar uma consulta por produto.
+
+Admin pode adicionar Membros; Master/Criador define e altera cargos. O alerta de reposição usa o limite editável por produto, com atalho em Produtos e Visão geral. Acesso externo, cobrança e integrações pendentes continuam sem ativação.

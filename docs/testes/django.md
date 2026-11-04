@@ -1,3 +1,5 @@
+> **Revisão mais recente:** [revisao.md](revisao.md), com organização atual, correções e 77 testes. Os resultados a seguir registram as validações anteriores.
+
 # Validação da migração Django/PostgreSQL — 04/11/2026
 
 ## Resultado final executado

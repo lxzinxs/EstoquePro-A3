@@ -1,3 +1,9 @@
+## Revisão atual
+
+A lista de produtos usa ação principal **Registrar entrada**, menu **Mais** e limite de alerta editável. Exemplo: [produtos-acoes.png](produtos-acoes.png). As capturas são de dados sintéticos de teste.
+
+Novas execuções automatizadas ficam em `data/quality/screenshots/`, ignorado no Git, para não sobrescrever os materiais acadêmicos. Os exemplos anteriores abaixo são preservados como histórico visual.
+
 # Interface e protótipos executáveis
 
 A interface real funciona como protótipo de alta fidelidade em `src/estoquepro/static/`. As capturas deste diretório são geradas pelo teste de navegador, usando dados fictícios e um banco temporário.
