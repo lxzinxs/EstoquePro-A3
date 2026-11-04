@@ -14,6 +14,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlsplit
 
 from .domain import Inventory, ROOT, ValidationError
+from .plans import PLANS
 
 
 class Application(ThreadingHTTPServer):
@@ -107,8 +108,10 @@ class Handler(BaseHTTPRequestHandler):
         url = urlsplit(self.path)
         path = url.path
         db = self.server.inventory
-        if method == 'GET' and path in ('/', '/app.js', '/style.css'):
-            filename, mime = {'/': ('index.html', 'text/html'), '/app.js': ('app.js', 'text/javascript'), '/style.css': ('style.css', 'text/css')}[path]
+        if method == 'GET' and path == '/api/plans':
+            return self.send(200, {'plans': PLANS, 'limits_enforced': False, 'billing_enabled': False})
+        if method == 'GET' and path in ('/', '/app.js', '/style.css', '/plans.js'):
+            filename, mime = {'/': ('index.html', 'text/html'), '/app.js': ('app.js', 'text/javascript'), '/style.css': ('style.css', 'text/css'), '/plans.js': ('plans.js', 'text/javascript')}[path]
             return self.send(200, (ROOT / 'src/estoquepro/static' / filename).read_bytes(), mime + '; charset=utf-8')
         if method == 'POST' and path in ('/api/login', '/api/register'):
             # A senha e o token só transitam em JSON/cookie, nunca na URL.

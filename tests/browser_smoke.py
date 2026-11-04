@@ -26,6 +26,17 @@ def run():
                 errors = []
                 page.on('pageerror', lambda error: errors.append(str(error)))
                 page.goto(f'http://127.0.0.1:{server.server_port}')
+                page.get_by_role('button', name='Conheça nossos planos').click()
+                plans = page.locator('#plans-dialog')
+                expect(plans.locator('.plan-card')).to_have_count(4)
+                expect(plans.locator('.plan-pro .plan-limits')).to_have_text('Contas e produtos ilimitados')
+                expect(plans.locator('.plan-business .plan-price')).to_contain_text('29,90')
+                page.screenshot(path=str(ROOT / 'docs/prototipos/planos-desktop.png'), full_page=True)
+                page.set_viewport_size({'width': 390, 'height': 844})
+                assert plans.evaluate('(el) => el.scrollWidth <= el.clientWidth'), 'Overflow no catálogo móvel'
+                page.screenshot(path=str(ROOT / 'docs/prototipos/planos-mobile.png'), full_page=True)
+                page.get_by_role('button', name='Fechar planos', exact=True).click()
+                page.set_viewport_size({'width': 1440, 'height': 1000})
                 page.get_by_role('tab', name='Cadastro', exact=True).click()
                 registration = page.locator('#register-form')
                 registration.get_by_label('Usuário', exact=True).fill('conta.navegador')

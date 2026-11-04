@@ -277,6 +277,21 @@ class HttpTests(unittest.TestCase):
             self.assertEqual(self.request(path)[0], 200)
         self.assertEqual(self.request('/api/unknown')[0], 404)
 
+    def test_public_plan_catalog(self):
+        status, _, body = self.request('/api/plans')
+        self.assertEqual(status, 200)
+        catalog = json.loads(body)
+        self.assertFalse(catalog['limits_enforced'])
+        self.assertFalse(catalog['billing_enabled'])
+        plans = catalog['plans']
+        self.assertEqual([p['id'] for p in plans], ['gratis', 'business', 'plus', 'pro'])
+        self.assertEqual([p['price_cents'] for p in plans], [0, 2990, 5990, 9990])
+        self.assertEqual([(p['accounts'], p['products']) for p in plans], [(1, 50), (2, 100), (5, 300), (None, None)])
+        for index, plan in enumerate(plans):
+            self.assertEqual(plan['inherits'], plans[index-1]['id'] if index else None)
+            self.assertEqual(len({f['name'] for f in plan['features']}), len(plan['features']))
+        self.assertEqual(self.request('/plans.js')[0], 200)
+
     def test_json_errors(self):
         self.login()
         for raw in ['invalid', '[]', '{', '"string"']:

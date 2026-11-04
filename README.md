@@ -102,3 +102,8 @@ O servidor HTTP incluído é destinado a desenvolvimento e demonstração acadê
 ## Pendências acadêmicas
 
 O **PDF da especificação**, o **template oficial**, os **integrantes e suas responsabilidades** e a **data sorteada da apresentação** não foram fornecidos. A documentação é provisória e a conformidade com o PDF não pode ser declarada. As datas do cronograma vêm exclusivamente do texto enviado. Não houve push, publicação nem submissão acadêmica.
+
+
+## Planos propostos
+
+A tela **Planos e recursos**, também acessível antes do login, apresenta Grátis (R$ 0, 1 conta/50 produtos), Business (R$ 29,90, 2/100), Plus (R$ 59,90, 5/300) e Pro (R$ 99,90, contas e produtos ilimitados). A comparação tem visual próprio e separa recursos atuais de planejados. **Não há cobrança, quotas aplicadas ou ativação dos módulos avançados nesta revisão.** Veja a [matriz funcional e roteiro de implantação](docs/planos.md).

@@ -82,3 +82,10 @@ Após o relato de falha de login em outra instalação, identificou-se que a tro
 - Captura da nova tela em `docs/prototipos/cadastro-desktop.png`. As demais capturas foram regeneradas pelo teste de interface.
 
 A aba Cadastro cria usuários do mesmo negócio, com as mesmas permissões; não cria estoques separados. Cadastro aberto pela tela só é aceito quando o servidor está vinculado a loopback. A conformidade acadêmica permanece provisória.
+
+## Catálogo de planos — 04/11/2026
+
+- `python -m unittest discover -s tests -v`: 26 testes aprovados, sem falhas ou ignorados (5,807 s). O novo teste valida endpoint público, preços 0/2990/5990/9990 centavos, hierarquia, quotas propostas e Pro ilimitado, além de flags explícitas de ausência de cobrança e enforcement.
+- `CHROMIUM_PATH=/usr/bin/chromium python tests/browser_smoke.py`: comparação abriu antes do login, exibiu quatro cartões, preço Business e Pro ilimitado; sem overflow interno a 390 px; fluxo existente completo aprovado, sem exceções JavaScript.
+- `node --check src/estoquepro/static/plans.js` e compilação Python aprovados. Capturas em `docs/prototipos/planos-desktop.png` e `planos-mobile.png`.
+- Estes testes validam o catálogo, não a execução dos recursos planejados. Quotas, cobrança e módulos comerciais ainda não foram implementados; situação por recurso em `docs/planos.md`.
