@@ -122,3 +122,17 @@ Ferramentas opcionais: instale `requirements-dev.txt` no ambiente virtual. O pro
 Na lista de Produtos, **Registrar entrada** é a ação principal; **Mais** reúne edição, alerta, histórico e arquivamento. Em **Alerta quando**, clique para ajustar o limite: 1 avisa com uma unidade ou menos; 0 avisa somente ao zerar. Essa configuração não adiciona ou remove estoque.
 
 **Adicionar membro** está disponível para Admin e Master (respeitando a quota do plano). Admin cria Membros; apenas Master ou Criador atribui cargos de gestão e altera cargos existentes. O último Master não pode ser removido.
+
+Se o Docker funciona, mas o script informa falha no PostgreSQL, execute:
+
+```sh
+python scripts/dev.py doctor
+docker ps --filter name=nerythstock-postgres
+docker port nerythstock-postgres
+```
+
+O diagnóstico testa a autenticação com a mesma configuração usada pela aplicação,
+sem mostrar senhas. `pg_isready` indica disponibilidade, mas não valida a senha.
+Um volume PostgreSQL existente conserva as credenciais originais mesmo se o
+arquivo de configuração for recriado. Não apague `data/` nem o volume para corrigir
+uma falha de conexão; não publique arquivos `.env`.

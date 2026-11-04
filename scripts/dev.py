@@ -108,23 +108,20 @@ if (
         "migrate",
         "test",
         "shell",
+        "doctor",
     )
     and "--help" not in args
 ):
     probe = subprocess.run(
-        [
-            str(python),
-            "-c",
-            "import psycopg; c=psycopg.connect(connect_timeout=3); c.close()",
-        ],
+        [str(python), str(ROOT / "scripts" / "database_probe.py")],
         env=env,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        capture_output=True,
+        text=True,
     )
-    if probe.returncode:
-        sys.exit(
-            "PostgreSQL não está acessível. Execute python scripts/dev.py setup e só prossiga após as migrações terminarem. Não apague data/ ou o volume do banco."
-        )
+    if probe.returncode or args[0] == "doctor":
+        print(probe.stdout.strip() or "Não foi possível executar o diagnóstico PostgreSQL.")
+        raise SystemExit(probe.returncode)
+
 try:
     status = subprocess.call([str(python), "manage.py", *args], env=env)
 except KeyboardInterrupt:
