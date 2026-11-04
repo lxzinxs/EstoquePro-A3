@@ -1,0 +1,46 @@
+# Perfil de preparação. Produção exige proxy HTTPS, credenciais e política de backup.
+services:
+  db:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: estoquepro
+      POSTGRES_USER: estoquepro
+      POSTGRES_PASSWORD: ${PGPASSWORD:?Defina PGPASSWORD fora do Git}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U estoquepro -d estoquepro]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  web:
+    build: .
+    environment: &app_environment
+      PGHOST: db
+      PGPORT: '5432'
+      PGDATABASE: estoquepro
+      PGUSER: estoquepro
+      PGPASSWORD: ${PGPASSWORD:?Defina PGPASSWORD}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Defina DJANGO_SECRET_KEY}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      DJANGO_CSRF_TRUSTED_ORIGINS: ${DJANGO_CSRF_TRUSTED_ORIGINS:-}
+      DJANGO_DEBUG: '0'
+    ports:
+      - 127.0.0.1:8000:8000
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - appdata:/app/data
+  worker:
+    build: .
+    command: [python, manage.py, runworker]
+    environment: *app_environment
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - appdata:/app/data
+volumes:
+  pgdata:
+  appdata:

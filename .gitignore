@@ -6,3 +6,5 @@ data/
 .env
 coverage.xml
 .coverage
+.env.*
+!.env.example
