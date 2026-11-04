@@ -29,3 +29,11 @@ Execução validada em Linux/Python 3.12/PostgreSQL 17/Chromium; Windows e Docke
 ## Diagnóstico de instalação no CachyOS
 
 Três testes unitários do helper (`python -m unittest discover -s tests -p test_runtime.py -v`) aprovados: CLI Docker ausente, permissão negada e preservação do contexto Docker Desktop fora do executor gerenciado. Setup agora verifica o daemon antes de tentar criar o banco; os comandos de aplicação verificam conectividade PostgreSQL antes de emitir traceback por banco indisponível. A instalação de pacotes na máquina CachyOS do usuário depende de execução local pelo usuário.
+
+## Revisão de usabilidade e acesso do Criador
+
+`python scripts/dev.py test inventory --noinput`: **31 testes aprovados**, zero falhas/erros/ignorados, 51,159 s na execução final. Inclui três fluxos Playwright: login/cadastro e primeiro produto sem categoria/fornecedor prévios; operações de estoque e menu agrupado em desktop/mobile; Criador com acesso Completo permanente e seleção dos três períodos dos planos.
+
+Verificados: Categoria Geral criada/reutilizada por negócio; fornecedor opcional; criação de categoria/fornecedor no mesmo formulário; POST de cadastro simples; isolamento mantido; preços 150/750/1500; contexto de Planos preservado; ausência de “Não contratado”, vencimento e botão de renovação no acesso do Criador; rótulos/erros e fluxo de autenticação; cabeçalho separado do conteúdo; menu recolhível e painel móvel com abertura/fechamento; sem overflow global em 390px. A primeira tentativa do teste móvel encontrou dois controles com o mesmo nome acessível; o botão do fundo recebeu nome distinto e o fluxo completo foi repetido com sucesso.
+
+Capturas atualizadas em `docs/prototipos/`: `acesso-django-*`, `cadastro-django-mobile.png`, `django-desktop.png`, `django-mobile.png`, `django-menu-mobile.png`, `produto-simples-mobile.png`, `planos-django-*` e `criador-completo-mobile.png`. Credenciais usadas nos testes são sintéticas e não são as do Criador real. Nenhuma cobrança ou funcionalidade externa foi ativada nesta revisão.

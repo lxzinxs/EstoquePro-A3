@@ -77,3 +77,13 @@ Por decisão do solicitante, domínio, SMTP e canais de suporte/WhatsApp permane
 - Ainda não houve auditoria externa de segurança, teste de carga, SLA comercial ou implantação HTTPS pública. Dockerfile/Compose são preparação; execução local validada usa PostgreSQL em container e Django no ambiente virtual.
 
 Essas pendências impedem afirmar que todos os recursos comerciais estão concluídos ou que o produto está pronto para venda. O MVP Django é demonstrável; o processo de lançamento continua após a apresentação.
+
+## Revisão de usabilidade — acesso, navegação, cadastro e planos
+
+- Entrar/Cadastro usam o estilo visual da primeira versão, com links destacados, layout responsivo e autenticação real Django.
+- Menu agrupado por Estoque, Compras, Financeiro e análises, Operações e Configurações; grupos recolhíveis e atalhos filtrados por permissão. Menu móvel abre em painel e preserva espaço para o conteúdo.
+- Cabeçalho com negócio selecionado, identidade e perfil. Planos agora recebe o contexto do negócio pela mesma camada de isolamento das outras telas; não mostra aviso de expiração por contexto ausente.
+- Produtos podem ser criados sem pré-cadastros: categoria omitida usa/cria Geral no mesmo negócio, fornecedor é opcional e ambos podem ser criados no formulário. A operação é transacional e respeita unicidade/quota. Custos e saldo continuam sendo definidos por movimentação; não se inventa entrada na criação do produto.
+- Campos e colunas traduzidos, dicas de preenchimento, opções avançadas recolhidas, atalho Registrar entrada com produto pré-selecionado e seleção automática de local somente quando houver um único local.
+- Planos em cartões com períodos mensal/semestral/anual e valores consistentes. A seleção altera apenas a apresentação: não contrata nem cobra.
+- Para o Criador, cabeçalho, Planos e Assinatura exibem acesso Completo permanente, sem cobrança/renovação ou vencimento. Isso deriva do privilégio exclusivo do usuário, não altera o plano de outras contas do negócio nem cria uma assinatura paga fictícia. Os recursos externos ainda pendentes continuam pendentes para todos, inclusive para o Criador.

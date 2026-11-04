@@ -98,3 +98,7 @@ sudo usermod -aG docker "$USER"
 ```
 
 Saia da sessão do KDE e entre novamente para aplicar o grupo. Em um terminal novo, confirme `docker info` e só então execute `python scripts/dev.py setup`. Se setup falhar, não prossiga para `provision_creator`: o banco ainda não está pronto. Não execute o projeto inteiro com sudo e não apague `data/` ou volumes.
+
+### Interface e primeiro produto
+
+A navegação está agrupada e os formulários mostram orientações. Para cadastrar o primeiro produto, informe código e nome, mantendo os valores padrão se necessário: a categoria Geral é automática e fornecedor é opcional. Depois use **Registrar entrada** para informar quantidade e custo de compra. Categorias/fornecedores também podem ser criados no próprio formulário em **Organização e fornecedor**. O Criador vê **Completo — acesso permanente do Criador** em Assinatura e não precisa contratar um plano.
