@@ -5,20 +5,25 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('inventory', '0003_legacyimport'),
+        ("inventory", "0003_legacyimport"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='organization',
-            name='billing_parent',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='businesses', to='inventory.organization'),
+            model_name="organization",
+            name="billing_parent",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="businesses",
+                to="inventory.organization",
+            ),
         ),
         migrations.AddField(
-            model_name='organization',
-            name='logo_file',
+            model_name="organization",
+            name="logo_file",
             field=models.CharField(blank=True, max_length=180),
         ),
     ]

@@ -5,19 +5,32 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('inventory', '0002_creator'),
+        ("inventory", "0002_creator"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='LegacyImport',
+            name="LegacyImport",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('digest', models.CharField(max_length=64, unique=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("digest", models.CharField(max_length=64, unique=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
             ],
         ),
     ]

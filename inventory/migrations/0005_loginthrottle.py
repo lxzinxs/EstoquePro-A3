@@ -5,18 +5,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('inventory', '0004_organization_billing_parent_organization_logo_file'),
+        ("inventory", "0004_organization_billing_parent_organization_logo_file"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='LoginThrottle',
+            name="LoginThrottle",
             fields=[
-                ('key', models.CharField(max_length=64, primary_key=True, serialize=False)),
-                ('attempts', models.PositiveIntegerField(default=0)),
-                ('window', models.DateTimeField(default=django.utils.timezone.now)),
+                (
+                    "key",
+                    models.CharField(max_length=64, primary_key=True, serialize=False),
+                ),
+                ("attempts", models.PositiveIntegerField(default=0)),
+                ("window", models.DateTimeField(default=django.utils.timezone.now)),
             ],
         ),
     ]

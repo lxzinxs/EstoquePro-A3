@@ -8,3 +8,6 @@ coverage.xml
 .coverage
 .env.*
 !.env.example
+
+.ruff_cache/
+htmlcov/

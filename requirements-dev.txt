@@ -1,0 +1,5 @@
+# Ferramentas opcionais de qualidade. Não são dependências da aplicação.
+ruff==0.17.3
+coverage==7.17.1
+bandit==1.9.4
+pip-audit==2.10.1

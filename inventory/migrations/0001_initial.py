@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -16,342 +15,904 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Company',
+            name="Company",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=120)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=120)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Organization',
+            name="Organization",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=120)),
-                ('plan', models.CharField(choices=[('basic', 'Básico'), ('complete', 'Completo')], default='basic', max_length=12)),
-                ('trial_ends_at', models.DateTimeField()),
-                ('paid_until', models.DateTimeField(blank=True, null=True)),
-                ('renewal_enabled', models.BooleanField(default=False)),
-                ('logo_url', models.URLField(blank=True, help_text='URL HTTPS da marca; sem download no servidor')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=120)),
+                (
+                    "plan",
+                    models.CharField(
+                        choices=[("basic", "Básico"), ("complete", "Completo")],
+                        default="basic",
+                        max_length=12,
+                    ),
+                ),
+                ("trial_ends_at", models.DateTimeField()),
+                ("paid_until", models.DateTimeField(blank=True, null=True)),
+                ("renewal_enabled", models.BooleanField(default=False)),
+                (
+                    "logo_url",
+                    models.URLField(
+                        blank=True,
+                        help_text="URL HTTPS da marca; sem download no servidor",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Location',
+            name="Location",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('kind', models.CharField(choices=[('stock', 'Estoque'), ('service', 'Atendimento')], default='stock', max_length=10)),
-                ('company', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.company')),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                (
+                    "kind",
+                    models.CharField(
+                        choices=[("stock", "Estoque"), ("service", "Atendimento")],
+                        default="stock",
+                        max_length=10,
+                    ),
+                ),
+                (
+                    "company",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.company",
+                    ),
+                ),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Ledger',
+            name="Ledger",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('kind', models.CharField(choices=[('payable', 'A pagar'), ('receivable', 'A receber')], max_length=10)),
-                ('description', models.CharField(max_length=180)),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=14)),
-                ('due_date', models.DateField()),
-                ('source_key', models.CharField(blank=True, max_length=100)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "kind",
+                    models.CharField(
+                        choices=[("payable", "A pagar"), ("receivable", "A receber")],
+                        max_length=10,
+                    ),
+                ),
+                ("description", models.CharField(max_length=180)),
+                ("amount", models.DecimalField(decimal_places=2, max_digits=14)),
+                ("due_date", models.DateField()),
+                ("source_key", models.CharField(blank=True, max_length=100)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Job',
+            name="Job",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('kind', models.CharField(choices=[('report', 'Relatório'), ('backup', 'Backup'), ('briefing', 'Resumo')], max_length=20)),
-                ('status', models.CharField(default='pending', max_length=12)),
-                ('payload', models.JSONField(default=dict)),
-                ('result_file', models.CharField(blank=True, max_length=180)),
-                ('error', models.CharField(blank=True, max_length=200)),
-                ('attempts', models.PositiveIntegerField(default=0)),
-                ('available_at', models.DateTimeField(default=django.utils.timezone.now)),
-                ('started_at', models.DateTimeField(null=True)),
-                ('finished_at', models.DateTimeField(null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('requested_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "kind",
+                    models.CharField(
+                        choices=[
+                            ("report", "Relatório"),
+                            ("backup", "Backup"),
+                            ("briefing", "Resumo"),
+                        ],
+                        max_length=20,
+                    ),
+                ),
+                ("status", models.CharField(default="pending", max_length=12)),
+                ("payload", models.JSONField(default=dict)),
+                ("result_file", models.CharField(blank=True, max_length=180)),
+                ("error", models.CharField(blank=True, max_length=200)),
+                ("attempts", models.PositiveIntegerField(default=0)),
+                (
+                    "available_at",
+                    models.DateTimeField(default=django.utils.timezone.now),
+                ),
+                ("started_at", models.DateTimeField(null=True)),
+                ("finished_at", models.DateTimeField(null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "requested_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Invoice',
+            name="Invoice",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('key', models.CharField(max_length=44)),
-                ('number', models.CharField(max_length=20)),
-                ('total', models.DecimalField(decimal_places=2, max_digits=14)),
-                ('imported_at', models.DateTimeField(auto_now_add=True)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("key", models.CharField(max_length=44)),
+                ("number", models.CharField(max_length=20)),
+                ("total", models.DecimalField(decimal_places=2, max_digits=14)),
+                ("imported_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='company',
-            name='organization',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization'),
+            model_name="company",
+            name="organization",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT, to="inventory.organization"
+            ),
         ),
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=80)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=80)),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Audit',
+            name="Audit",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('action', models.CharField(max_length=80)),
-                ('details', models.JSONField(default=dict)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('actor', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("action", models.CharField(max_length=80)),
+                ("details", models.JSONField(default=dict)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "actor",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Payment',
+            name="Payment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=14)),
-                ('date', models.DateField()),
-                ('actor', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
-                ('ledger', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='payments', to='inventory.ledger')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("amount", models.DecimalField(decimal_places=2, max_digits=14)),
+                ("date", models.DateField()),
+                (
+                    "actor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "ledger",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="payments",
+                        to="inventory.ledger",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Product',
+            name="Product",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sku', models.CharField(max_length=32)),
-                ('name', models.CharField(max_length=120)),
-                ('barcode', models.CharField(blank=True, max_length=64)),
-                ('price', models.DecimalField(decimal_places=2, default=0, max_digits=14)),
-                ('average_cost', models.DecimalField(decimal_places=6, default=0, max_digits=18)),
-                ('minimum', models.PositiveIntegerField(default=0)),
-                ('lead_days', models.PositiveIntegerField(default=7)),
-                ('active', models.BooleanField(default=True)),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.category')),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("sku", models.CharField(max_length=32)),
+                ("name", models.CharField(max_length=120)),
+                ("barcode", models.CharField(blank=True, max_length=64)),
+                (
+                    "price",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=14),
+                ),
+                (
+                    "average_cost",
+                    models.DecimalField(decimal_places=6, default=0, max_digits=18),
+                ),
+                ("minimum", models.PositiveIntegerField(default=0)),
+                ("lead_days", models.PositiveIntegerField(default=7)),
+                ("active", models.BooleanField(default=True)),
+                (
+                    "category",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.category",
+                    ),
+                ),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Movement',
+            name="Movement",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('kind', models.CharField(choices=[('entry', 'Entrada'), ('exit', 'Saída')], max_length=10)),
-                ('quantity', models.PositiveIntegerField()),
-                ('unit_cost', models.DecimalField(decimal_places=6, default=0, max_digits=18)),
-                ('note', models.CharField(max_length=240)),
-                ('allocations', models.JSONField(default=list)),
-                ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
-                ('actor', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
-                ('location', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.location')),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.product')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "kind",
+                    models.CharField(
+                        choices=[("entry", "Entrada"), ("exit", "Saída")], max_length=10
+                    ),
+                ),
+                ("quantity", models.PositiveIntegerField()),
+                (
+                    "unit_cost",
+                    models.DecimalField(decimal_places=6, default=0, max_digits=18),
+                ),
+                ("note", models.CharField(max_length=240)),
+                ("allocations", models.JSONField(default=list)),
+                ("created_at", models.DateTimeField(default=django.utils.timezone.now)),
+                (
+                    "actor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "location",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.location",
+                    ),
+                ),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.product",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Lot',
+            name="Lot",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.CharField(max_length=80)),
-                ('expiry', models.DateField(blank=True, null=True)),
-                ('quantity', models.PositiveIntegerField(default=0)),
-                ('location', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.location')),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.product')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("code", models.CharField(max_length=80)),
+                ("expiry", models.DateField(blank=True, null=True)),
+                ("quantity", models.PositiveIntegerField(default=0)),
+                (
+                    "location",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.location",
+                    ),
+                ),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.product",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='PurchaseOrder',
+            name="PurchaseOrder",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.CharField(choices=[('pending', 'Pendente'), ('received', 'Recebido')], default='pending', max_length=12)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('received_at', models.DateTimeField(blank=True, null=True)),
-                ('location', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.location')),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[("pending", "Pendente"), ("received", "Recebido")],
+                        default="pending",
+                        max_length=12,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("received_at", models.DateTimeField(blank=True, null=True)),
+                (
+                    "location",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.location",
+                    ),
+                ),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='PurchaseLine',
+            name="PurchaseLine",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('quantity', models.PositiveIntegerField()),
-                ('unit_cost', models.DecimalField(decimal_places=2, max_digits=14)),
-                ('lot_code', models.CharField(default='PADRAO', max_length=80)),
-                ('expiry', models.DateField(blank=True, null=True)),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.product')),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lines', to='inventory.purchaseorder')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("quantity", models.PositiveIntegerField()),
+                ("unit_cost", models.DecimalField(decimal_places=2, max_digits=14)),
+                ("lot_code", models.CharField(default="PADRAO", max_length=80)),
+                ("expiry", models.DateField(blank=True, null=True)),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.product",
+                    ),
+                ),
+                (
+                    "order",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="lines",
+                        to="inventory.purchaseorder",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Schedule',
+            name="Schedule",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('kind', models.CharField(choices=[('report', 'Relatório'), ('backup', 'Backup'), ('briefing', 'Resumo')], max_length=20)),
-                ('interval_hours', models.PositiveIntegerField(default=24)),
-                ('next_run', models.DateTimeField(default=django.utils.timezone.now)),
-                ('enabled', models.BooleanField(default=True)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "kind",
+                    models.CharField(
+                        choices=[
+                            ("report", "Relatório"),
+                            ("backup", "Backup"),
+                            ("briefing", "Resumo"),
+                        ],
+                        max_length=20,
+                    ),
+                ),
+                ("interval_hours", models.PositiveIntegerField(default=24)),
+                ("next_run", models.DateTimeField(default=django.utils.timezone.now)),
+                ("enabled", models.BooleanField(default=True)),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='StockCount',
+            name="StockCount",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('counted', models.PositiveIntegerField()),
-                ('status', models.CharField(default='pending', max_length=10)),
-                ('actor', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('closed_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('location', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.location')),
-                ('lot', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.lot')),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.product')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("counted", models.PositiveIntegerField()),
+                ("status", models.CharField(default="pending", max_length=10)),
+                (
+                    "actor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "closed_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "location",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.location",
+                    ),
+                ),
+                (
+                    "lot",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="inventory.lot"
+                    ),
+                ),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.product",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Supplier',
+            name="Supplier",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('email', models.EmailField(blank=True, max_length=254)),
-                ('phone', models.CharField(blank=True, max_length=20)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("email", models.EmailField(blank=True, max_length=254)),
+                ("phone", models.CharField(blank=True, max_length=20)),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Quote',
+            name="Quote",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('round_key', models.CharField(max_length=40)),
-                ('price', models.DecimalField(decimal_places=2, max_digits=14)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.product')),
-                ('supplier', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.supplier')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("round_key", models.CharField(max_length=40)),
+                ("price", models.DecimalField(decimal_places=2, max_digits=14)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.product",
+                    ),
+                ),
+                (
+                    "supplier",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.supplier",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='purchaseorder',
-            name='supplier',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.supplier'),
+            model_name="purchaseorder",
+            name="supplier",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT, to="inventory.supplier"
+            ),
         ),
         migrations.AddField(
-            model_name='product',
-            name='supplier',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='inventory.supplier'),
+            model_name="product",
+            name="supplier",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="inventory.supplier",
+            ),
         ),
         migrations.CreateModel(
-            name='Transfer',
+            name="Transfer",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('quantity', models.PositiveIntegerField()),
-                ('allocations', models.JSONField(default=list)),
-                ('status', models.CharField(default='pending', max_length=10)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('actor', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('confirmed_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('destination', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='inventory.location')),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.organization')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='inventory.product')),
-                ('source', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='inventory.location')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("quantity", models.PositiveIntegerField()),
+                ("allocations", models.JSONField(default=list)),
+                ("status", models.CharField(default="pending", max_length=10)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "actor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "confirmed_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "destination",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="inventory.location",
+                    ),
+                ),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.organization",
+                    ),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="inventory.product",
+                    ),
+                ),
+                (
+                    "source",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to="inventory.location",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Membership',
+            name="Membership",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('role', models.CharField(choices=[('member', 'Membro'), ('admin', 'Admin'), ('master', 'Master')], max_length=10)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='inventory.organization')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "role",
+                    models.CharField(
+                        choices=[
+                            ("member", "Membro"),
+                            ("admin", "Admin"),
+                            ("master", "Master"),
+                        ],
+                        max_length=10,
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="inventory.organization",
+                    ),
+                ),
             ],
             options={
-                'constraints': [models.UniqueConstraint(fields=('organization', 'user'), name='unique_membership')],
+                "constraints": [
+                    models.UniqueConstraint(
+                        fields=("organization", "user"), name="unique_membership"
+                    )
+                ],
             },
         ),
         migrations.AddConstraint(
-            model_name='ledger',
-            constraint=models.CheckConstraint(condition=models.Q(('amount__gt', 0)), name='ledger_positive'),
+            model_name="ledger",
+            constraint=models.CheckConstraint(
+                condition=models.Q(("amount__gt", 0)), name="ledger_positive"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='ledger',
-            constraint=models.UniqueConstraint(condition=models.Q(('source_key', ''), _negated=True), fields=('organization', 'source_key'), name='ledger_source_unique'),
+            model_name="ledger",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("source_key", ""), _negated=True),
+                fields=("organization", "source_key"),
+                name="ledger_source_unique",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='invoice',
-            constraint=models.UniqueConstraint(fields=('organization', 'key'), name='invoice_key_org'),
+            model_name="invoice",
+            constraint=models.UniqueConstraint(
+                fields=("organization", "key"), name="invoice_key_org"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='category',
-            constraint=models.UniqueConstraint(fields=('organization', 'name'), name='category_name_org'),
+            model_name="category",
+            constraint=models.UniqueConstraint(
+                fields=("organization", "name"), name="category_name_org"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='payment',
-            constraint=models.CheckConstraint(condition=models.Q(('amount__gt', 0)), name='payment_positive'),
+            model_name="payment",
+            constraint=models.CheckConstraint(
+                condition=models.Q(("amount__gt", 0)), name="payment_positive"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='movement',
-            constraint=models.CheckConstraint(condition=models.Q(('quantity__gt', 0), ('unit_cost__gte', 0)), name='movement_positive'),
+            model_name="movement",
+            constraint=models.CheckConstraint(
+                condition=models.Q(("quantity__gt", 0), ("unit_cost__gte", 0)),
+                name="movement_positive",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='lot',
-            constraint=models.UniqueConstraint(fields=('product', 'location', 'code'), name='lot_key'),
+            model_name="lot",
+            constraint=models.UniqueConstraint(
+                fields=("product", "location", "code"), name="lot_key"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='purchaseline',
-            constraint=models.CheckConstraint(condition=models.Q(('quantity__gt', 0), ('unit_cost__gte', 0)), name='purchase_positive'),
+            model_name="purchaseline",
+            constraint=models.CheckConstraint(
+                condition=models.Q(("quantity__gt", 0), ("unit_cost__gte", 0)),
+                name="purchase_positive",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='schedule',
-            constraint=models.UniqueConstraint(fields=('organization', 'kind'), name='schedule_org_kind'),
+            model_name="schedule",
+            constraint=models.UniqueConstraint(
+                fields=("organization", "kind"), name="schedule_org_kind"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='quote',
-            constraint=models.UniqueConstraint(fields=('organization', 'product', 'round_key', 'supplier'), name='quote_supplier_round'),
+            model_name="quote",
+            constraint=models.UniqueConstraint(
+                fields=("organization", "product", "round_key", "supplier"),
+                name="quote_supplier_round",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='quote',
-            constraint=models.CheckConstraint(condition=models.Q(('price__gte', 0)), name='quote_positive'),
+            model_name="quote",
+            constraint=models.CheckConstraint(
+                condition=models.Q(("price__gte", 0)), name="quote_positive"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='product',
-            constraint=models.UniqueConstraint(fields=('organization', 'sku'), name='sku_org'),
+            model_name="product",
+            constraint=models.UniqueConstraint(fields=("organization", "sku"), name="sku_org"),
         ),
         migrations.AddConstraint(
-            model_name='product',
-            constraint=models.UniqueConstraint(condition=models.Q(('barcode', ''), _negated=True), fields=('organization', 'barcode'), name='barcode_org'),
+            model_name="product",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(("barcode", ""), _negated=True),
+                fields=("organization", "barcode"),
+                name="barcode_org",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='product',
-            constraint=models.CheckConstraint(condition=models.Q(('price__gte', 0), ('average_cost__gte', 0)), name='product_money_positive'),
+            model_name="product",
+            constraint=models.CheckConstraint(
+                condition=models.Q(("price__gte", 0), ("average_cost__gte", 0)),
+                name="product_money_positive",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='transfer',
-            constraint=models.CheckConstraint(condition=models.Q(('quantity__gt', 0), models.Q(('source', models.F('destination')), _negated=True)), name='transfer_valid'),
+            model_name="transfer",
+            constraint=models.CheckConstraint(
+                condition=models.Q(
+                    ("quantity__gt", 0),
+                    models.Q(("source", models.F("destination")), _negated=True),
+                ),
+                name="transfer_valid",
+            ),
         ),
     ]

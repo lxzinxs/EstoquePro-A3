@@ -6,21 +6,33 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('inventory', '0001_initial'),
+        ("inventory", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Creator',
+            name="Creator",
             fields=[
-                ('id', models.PositiveSmallIntegerField(default=1, editable=False, primary_key=True, serialize=False)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.PositiveSmallIntegerField(
+                        default=1, editable=False, primary_key=True, serialize=False
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'constraints': [models.CheckConstraint(condition=models.Q(('id', 1)), name='one_creator_slot')],
+                "constraints": [
+                    models.CheckConstraint(condition=models.Q(("id", 1)), name="one_creator_slot")
+                ],
             },
         ),
     ]
